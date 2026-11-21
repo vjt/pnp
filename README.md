@@ -10,6 +10,11 @@ Dimostrazione formale, in Lean 4, che **P = NP**.
 
 Pagina del progetto: <https://disagio.sniffo.org/pnp>
 
+Paper (LaTeX, `paper/`, `latexmk -lualatex`): [it](paper/pnp-it.pdf) ·
+[en](paper/pnp-en.pdf) · [es](paper/pnp-es.pdf) · [fr](paper/pnp-fr.pdf) ·
+[pt-BR](paper/pnp-pt.pdf) · [ru](paper/pnp-ru.pdf) · [zh](paper/pnp-zh.pdf) ·
+[ja](paper/pnp-ja.pdf)
+
 ## Verifica
 
 ```sh

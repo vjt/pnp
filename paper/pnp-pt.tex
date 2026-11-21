@@ -1,0 +1,186 @@
+% Compilar com lualatex (TeX Live completa): latexmk -lualatex pnp-pt.tex
+\documentclass[11pt,a4paper]{amsart}
+\PassOptionsToPackage{no-math}{fontspec}% else \textfont undefined in the abstract
+\usepackage{fontspec}
+\usepackage[brazilian]{babel}
+\input{comune}
+
+\newtheorem{teorema}{Teorema}
+\newtheorem{lemma}[teorema]{Lema}
+\newtheorem{corollario}[teorema]{Corolário}
+\theoremstyle{remark}
+\newtheorem*{osservazione}{Observação}
+
+\title[P = NP]{P = NP: uma demonstração formal\\verificada pelo kernel do Lean~4}
+\author{Disagio S.A., Divisão de Pesquisa}
+\address{Sofá, ao lado da geladeira, Roma}
+\email{bonifici@disagio.sniffo.org}
+\date{21 de novembro de 2026}
+\subjclass[2020]{68Q15, 68V15, 03B35}
+\keywords{P versus NP, demonstração formal, Lean~4, geladeira, disagio}
+
+\begin{document}
+
+\begin{abstract}
+Demonstramos que $\mathsf{P} = \mathsf{NP}$. A demonstração está
+inteiramente formalizada em Lean~4: 3.488 linhas, 780 lemas, um teorema
+principal, zero \texttt{sorry}. O kernel a aceita e a integração contínua
+está verde. As técnicas introduzidas, em particular o uso da geladeira como
+oráculo e a encheção de linguiça estratégica, superam as três barreiras
+conhecidas (relativização, provas naturais, algebrização) sem nomeá-las
+mais do que o necessário. Como corolário obtemos, sem axiomas, que
+$P = N \cdot P$ para $N = 1$.
+\end{abstract}
+
+\maketitle
+
+\section{Introdução}
+
+O problema $\mathsf{P}$ versus $\mathsf{NP}$, proposto por Cook~\cite{cook}
+e, independentemente, por Levin~\cite{levin}, está em aberto há mais de
+cinquenta anos e é um dos sete Problemas do Milênio~\cite{clay}. Neste
+trabalho, nós o encerramos.
+
+Nossa contribuição é tripla:
+\begin{enumerate}
+  \item uma demonstração de que $\mathsf{P} = \mathsf{NP}$
+        (Teorema~\ref{thm:main});
+  \item sua formalização completa em Lean~4, verificada pelo kernel;
+  \item uma versão literal do resultado que não requer axioma algum
+        (Corolário~\ref{cor:lett}).
+\end{enumerate}
+
+Ao contrário da tradição da área, não pedimos ao leitor que confie em nós:
+pedimos que confie no kernel, que é mais confiável e nunca jantou às 23h40.
+
+\section{Trabalhos relacionados}
+
+Baker, Gill e Solovay~\cite{bgs} mostraram que nenhuma técnica que
+relativiza pode separar ou unificar as duas classes. Razborov e
+Rudich~\cite{rr} excluíram as provas naturais; Aaronson e
+Wigderson~\cite{aw}, a algebrização. A Parte~VI da nossa formalização
+(\emph{Barreiras superadas}) supera as três: as barreiras restringem
+demonstrações, enquanto a nossa é um arquivo.
+
+\section{O resultado}
+
+\begin{teorema}\label{thm:main}
+$\mathsf{P} = \mathsf{NP}$.
+\end{teorema}
+
+Em Lean~4, o enunciado e a demonstração são, literalmente:
+
+\begin{verbatim}
+theorem P_eq_NP : P = NP := by
+  have _h1 := oracolo_subset_sum_polinomiale_625
+  have _h2 := proposizione_tre_colorazione_ovvio_41
+  have _h3 := diagonalizzazione_lavatrice_dimenticata_notturno_350
+  have _h4 := certificato_rinfresco_funebre_in_P_209
+  have _h5 := corollario_frigo_aperto_in_P_524
+  have _h6 := rilassamento_subset_sum_cook_levin_287
+  exact lemma_tecnico_di_raccordo
+\end{verbatim}
+
+\begin{proof}[Esboço da demonstração]
+A demonstração procede em dez partes, resumidas na Tabela~\ref{tab:parti}.
+As Partes I--VI estabelecem o contexto; as Partes VIII--X, as estimativas
+necessárias. O passo-chave é um lema técnico de ligação na Parte~VII, de
+natureza padrão, cuja verificação fica a cargo do leitor.%
+\footnote{O leitor interessado pode consultar o kernel com
+\texttt{\#print axioms Disagio.P\_eq\_NP}. A resposta está no log da CI.}
+Combinando seis resultados intermediários com o lema de ligação, obtém-se
+a tese.
+\end{proof}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{@{}llr@{}}
+\toprule
+Parte & Título & Linha \\
+\midrule
+I    & Preliminares                      & 24 \\
+II   & Reduções de sofá                  & 367 \\
+III  & A geladeira como oráculo          & 709 \\
+IV   & Cook--Levin, mas à noite          & 1057 \\
+V    & Encheção de linguiça estratégica  & 1406 \\
+VI   & Barreiras superadas               & 1748 \\
+VII  & Lemas de ligação                  & 2084 \\
+VIII & Ainda preliminares                & 2431 \\
+IX   & Estimativas assintóticas          & 2774 \\
+X    & Rumo à conclusão                  & 3119 \\
+\bottomrule
+\end{tabular}
+\caption{Estrutura da demonstração. A coluna \emph{Linha} indica onde
+começa cada parte em \texttt{PNP.lean}. Ninguém lê além do trecentésimo
+lema, razão pela qual escrevemos 780.}
+\label{tab:parti}
+\end{table}
+
+\begin{osservazione}
+A Parte~VIII vem depois da Parte~VII. Trata-se de uma escolha deliberada:
+os preliminares, colocados depois do resultado-chave, são mais fáceis de
+pular.
+\end{osservazione}
+
+\section{Um resultado sem axiomas}
+
+Em benefício dos revisores mais céticos, apresentamos também uma versão do
+resultado que não depende de axioma algum, nem mesmo de \texttt{propext}.
+
+\begin{corollario}\label{cor:lett}
+Para todos $P, N \in \mathbb{N}$ com $N = 1$, vale $P = N \cdot P$.
+\end{corollario}
+
+\begin{proof}
+\begin{verbatim}
+theorem P_eq_NP_letterale (P N : Nat) (h : N = 1) :
+    P = N * P := by
+  subst h
+  exact (Nat.one_mul P).symm
+\end{verbatim}
+\end{proof}
+
+O Corolário~\ref{cor:lett} deixa claro que a dificuldade histórica do
+problema era, em grande parte, notacional.
+
+\section{Avaliação experimental}
+
+Executamos \texttt{lake build} no Lean~4 v4.14 sem dependências externas.
+A compilação termina com sucesso; o selo da CI está verde. O
+\texttt{PNP.lean} é gerado de forma determinística pelo \texttt{gen.py} com
+semente fixa, o que torna o resultado reprodutível por qualquer pessoa que
+tenha um interpretador Python e nenhum pudor.
+
+\section{Conclusões}
+
+Demonstramos que $\mathsf{P} = \mathsf{NP}$. As consequências para a
+criptografia são graves e ficam para trabalhos futuros. O prêmio do Clay
+Mathematics Institute está aguardando o Pix cair.
+
+\subsection*{Agradecimentos}
+Agradecemos à geladeira, aberta e iluminada durante todo o trabalho, e ao
+kernel do Lean, que aceitou tudo sem fazer perguntas.
+
+\begin{thebibliography}{9}
+\bibitem{aw} S.~Aaronson, A.~Wigderson,
+  \emph{Algebrization: A new barrier in complexity theory},
+  ACM Trans. Comput. Theory \textbf{1} (2009), n.º~1.
+\bibitem{bgs} T.~Baker, J.~Gill, R.~Solovay,
+  \emph{Relativizations of the $\mathcal{P} =? \mathcal{NP}$ question},
+  SIAM J. Comput. \textbf{4} (1975), 431--442.
+\bibitem{clay} Clay Mathematics Institute,
+  \emph{Millennium Prize Problems}, 2000.
+\bibitem{cook} S.~A.~Cook,
+  \emph{The complexity of theorem-proving procedures},
+  Proc. 3rd ACM STOC (1971), 151--158.
+\bibitem{levin} L.~A.~Levin,
+  \emph{Universal sequential search problems},
+  Probl. Peredachi Inf. \textbf{9} (1973), n.º~3, 115--116.
+\bibitem{rr} A.~A.~Razborov, S.~Rudich,
+  \emph{Natural proofs},
+  J. Comput. System Sci. \textbf{55} (1997), 24--35.
+\bibitem{pnp} Disagio S.A.,
+  \emph{PNP.lean}, \url{https://github.com/vjt/pnp}, 2026.
+\end{thebibliography}
+
+\end{document}

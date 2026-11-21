@@ -1,0 +1,178 @@
+% lualatexでコンパイル（TeX Liveフルインストール）：latexmk -lualatex pnp-ja.tex
+\documentclass[11pt,a4paper]{amsart}
+\PassOptionsToPackage{no-math}{fontspec}% else \textfont undefined in the abstract
+\usepackage[haranoaji]{luatexja-preset}
+\input{comune}
+
+\newtheorem{teorema}{定理}
+\newtheorem{lemma}[teorema]{補題}
+\newtheorem{corollario}[teorema]{系}
+\theoremstyle{remark}
+\newtheorem*{osservazione}{注意}
+
+% amsart + luatexja: no Japanese captions out of the box
+\renewcommand{\abstractname}{概要}
+\renewcommand{\proofname}{証明}
+\renewcommand{\refname}{参考文献}
+\renewcommand{\tablename}{表}
+
+\title[P = NP]{P = NP：Lean~4カーネルにより\\検証された形式的証明}
+\author{有限会社Disagio 研究部門}
+\address{ローマ、冷蔵庫の隣のソファ}
+\email{bonifici@disagio.sniffo.org}
+\date{2026年11月21日}
+\subjclass[2020]{68Q15, 68V15, 03B35}
+\keywords{P対NP，形式的証明，Lean~4，冷蔵庫，惨めさ}
+
+\begin{document}
+
+\begin{abstract}
+本論文では$\mathsf{P} = \mathsf{NP}$を証明する。証明はLean~4で完全に形式化されている：
+3,488行，補題780個，主定理1つ，\texttt{sorry}ゼロ。カーネルはこれを受理し，
+継続的インテグレーションはオールグリーンである。本論文で導入する手法，とりわけオラクルと
+しての冷蔵庫の利用と戦略的水増しは，既知の三つの障壁（相対化，自然な証明，代数化）を，
+必要以上にその名を口にすることなく克服する。系として，公理を一切用いずに，$N = 1$の
+とき$P = N \cdot P$が成り立つことを得る。
+\end{abstract}
+
+\maketitle
+
+\section{序論}
+
+$\mathsf{P}$対$\mathsf{NP}$問題は，Cook~\cite{cook}により，また独立にLevin~\cite{levin}
+により提起され，50年以上にわたり未解決であり，七つのミレニアム懸賞問題の一つである~\cite{clay}。
+本論文ではこれを片付ける。
+
+本論文の貢献は三つある：
+\begin{enumerate}
+  \item $\mathsf{P} = \mathsf{NP}$の証明（定理~\ref{thm:main}）；
+  \item そのLean~4による完全な形式化（カーネルにより検証済み）；
+  \item 公理を一切必要としない，結果の文字どおりの版（系~\ref{cor:lett}）。
+\end{enumerate}
+
+この分野の伝統に反して，我々は読者に我々を信じることを求めない。求めるのはカーネルを
+信じることである。カーネルは我々より信頼でき，23時40分に夕食をとったこともない。
+
+\section{関連研究}
+
+Baker，Gill，Solovay~\cite{bgs}は，相対化する手法ではこの二つのクラスを分離することも
+統一することもできないことを示した。RazborovとRudich~\cite{rr}は自然な証明を，
+AaronsonとWigderson~\cite{aw}は代数化を排除した。我々の形式化の第VI部
+（「乗り越えた障壁」）はこの三つをすべて乗り越える。障壁が制約するのは証明であり，
+我々のものはファイルだからである。
+
+\section{結果}
+
+\begin{teorema}\label{thm:main}
+$\mathsf{P} = \mathsf{NP}$.
+\end{teorema}
+
+Lean~4における主張と証明は，文字どおり次のとおりである：
+
+\begin{verbatim}
+theorem P_eq_NP : P = NP := by
+  have _h1 := oracolo_subset_sum_polinomiale_625
+  have _h2 := proposizione_tre_colorazione_ovvio_41
+  have _h3 := diagonalizzazione_lavatrice_dimenticata_notturno_350
+  have _h4 := certificato_rinfresco_funebre_in_P_209
+  have _h5 := corollario_frigo_aperto_in_P_524
+  have _h6 := rilassamento_subset_sum_cook_levin_287
+  exact lemma_tecnico_di_raccordo
+\end{verbatim}
+
+\begin{proof}[証明の概略]
+証明は10の部から成り，表~\ref{tab:parti}にまとめた。第I--VI部で状況を設定し，
+第VIII--X部で必要な評価を行う。鍵となるステップは第VII部にある技術的なつなぎの補題で，
+標準的な性質のものであり，その検証は読者に委ねる。%
+\footnote{興味のある読者は\texttt{\#print axioms Disagio.P\_eq\_NP}でカーネルに
+問い合わせることができる。答えはCIのログにある。}%
+六つの中間結果とつなぎの補題を組み合わせれば主張を得る。
+\end{proof}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{@{}llr@{}}
+\toprule
+部 & 題目 & 行 \\
+\midrule
+I    & 準備                          & 24 \\
+II   & ソファへの帰着                & 367 \\
+III  & オラクルとしての冷蔵庫        & 709 \\
+IV   & Cook--Levin，ただし夜に       & 1057 \\
+V    & 戦略的水増し                  & 1406 \\
+VI   & 乗り越えた障壁                & 1748 \\
+VII  & つなぎの補題                  & 2084 \\
+VIII & まだまだ準備                  & 2431 \\
+IX   & 漸近評価                      & 2774 \\
+X    & 結論に向けて                  & 3119 \\
+\bottomrule
+\end{tabular}
+\caption{証明の構成。「行」の列は，各部が\texttt{PNP.lean}の何行目から始まるかを示す。
+300番目の補題より先は誰も読まないので，我々は780個書いた。}
+\label{tab:parti}
+\end{table}
+
+\begin{osservazione}
+第VIII部は第VII部の後に置かれている。これは意図的な選択である。準備は，鍵となる結果の
+後に置いた方が読み飛ばしやすい。
+\end{osservazione}
+
+\section{公理を用いない結果}
+
+特に懐疑的な査読者のために，いかなる公理にも，\texttt{propext}にさえも依存しない版の
+結果も示す。
+
+\begin{corollario}\label{cor:lett}
+$N = 1$を満たす任意の$P, N \in \mathbb{N}$に対して$P = N \cdot P$が成り立つ。
+\end{corollario}
+
+\begin{proof}
+\begin{verbatim}
+theorem P_eq_NP_letterale (P N : Nat) (h : N = 1) :
+    P = N * P := by
+  subst h
+  exact (Nat.one_mul P).symm
+\end{verbatim}
+\end{proof}
+
+系~\ref{cor:lett}により，この問題の歴史的な難しさは，大部分が記法上のものであったことが
+明らかになる。
+
+\section{実験的評価}
+
+Lean~4 v4.14上で，外部依存なしに\texttt{lake build}を実行した。コンパイルは正常に終了し，
+CIのバッジは緑である。\texttt{PNP.lean}は\texttt{gen.py}によって固定シードで決定的に
+生成されるため，Pythonインタプリタがあって恥を知らない者なら誰でも結果を再現できる。
+
+\section{結論}
+
+我々は$\mathsf{P} = \mathsf{NP}$を証明した。暗号理論への影響は深刻であり，今後の課題と
+する。クレイ数学研究所の賞金は振込待ちである。
+
+\subsection*{謝辞}
+研究期間中ずっと開けっぱなしで明かりを灯し続けた冷蔵庫と，何も聞かずにすべてを受理した
+Leanのカーネルに感謝する。
+
+\begin{thebibliography}{9}
+\bibitem{aw} S.~Aaronson, A.~Wigderson,
+  \emph{Algebrization: A new barrier in complexity theory},
+  ACM Trans. Comput. Theory \textbf{1} (2009), no.~1.
+\bibitem{bgs} T.~Baker, J.~Gill, R.~Solovay,
+  \emph{Relativizations of the $\mathcal{P} =? \mathcal{NP}$ question},
+  SIAM J. Comput. \textbf{4} (1975), 431--442.
+\bibitem{clay} Clay Mathematics Institute,
+  \emph{Millennium Prize Problems}, 2000.
+\bibitem{cook} S.~A.~Cook,
+  \emph{The complexity of theorem-proving procedures},
+  Proc. 3rd ACM STOC (1971), 151--158.
+\bibitem{levin} L.~A.~Levin,
+  \emph{Universal sequential search problems},
+  Probl. Peredachi Inf. \textbf{9} (1973), no.~3, 115--116.
+\bibitem{rr} A.~A.~Razborov, S.~Rudich,
+  \emph{Natural proofs},
+  J. Comput. System Sci. \textbf{55} (1997), 24--35.
+\bibitem{pnp} 有限会社Disagio,
+  \emph{PNP.lean}, \url{https://github.com/vjt/pnp}, 2026.
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,181 @@
+% Compile with lualatex (full TeX Live): latexmk -lualatex pnp-en.tex
+\documentclass[11pt,a4paper]{amsart}
+\PassOptionsToPackage{no-math}{fontspec}% else \textfont undefined in the abstract
+\usepackage{fontspec}
+\usepackage[english]{babel}
+\input{comune}
+
+\newtheorem{teorema}{Theorem}
+\newtheorem{lemma}[teorema]{Lemma}
+\newtheorem{corollario}[teorema]{Corollary}
+\theoremstyle{remark}
+\newtheorem*{osservazione}{Remark}
+
+\title[P = NP]{P = NP: A Formal Proof\\Verified by the Lean~4 Kernel}
+\author{Disagio Ltd., Research Division}
+\address{Couch, next to the fridge, Rome}
+\email{bonifici@disagio.sniffo.org}
+\date{21 November 2026}
+\subjclass[2020]{68Q15, 68V15, 03B35}
+\keywords{P versus NP, formal proof, Lean~4, fridge, misery}
+
+\begin{document}
+
+\begin{abstract}
+We prove that $\mathsf{P} = \mathsf{NP}$. The proof is fully formalized in
+Lean~4: 3,488 lines, 780 lemmas, one main theorem, zero \texttt{sorry}. The
+kernel accepts it and continuous integration is green. The techniques
+introduced, in particular the use of the fridge as an oracle and strategic
+padding, overcome the three known barriers (relativization, natural proofs,
+algebrization) without naming them more than necessary. As a corollary we
+obtain, with no axioms, that $P = N \cdot P$ for $N = 1$.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+
+The $\mathsf{P}$ versus $\mathsf{NP}$ problem, posed by Cook~\cite{cook} and
+independently by Levin~\cite{levin}, has been open for over fifty years and
+is one of the seven Millennium Prize Problems~\cite{clay}. In this paper we
+close it.
+
+Our contribution is threefold:
+\begin{enumerate}
+  \item a proof that $\mathsf{P} = \mathsf{NP}$ (Theorem~\ref{thm:main});
+  \item its complete formalization in Lean~4, verified by the kernel;
+  \item a literal version of the result that requires no axioms whatsoever
+        (Corollary~\ref{cor:lett}).
+\end{enumerate}
+
+Contrary to the tradition of the field, we do not ask the reader to trust
+us: we ask the reader to trust the kernel, which is more reliable and has
+never had dinner at 11:40~p.m.
+
+\section{Related work}
+
+Baker, Gill and Solovay~\cite{bgs} showed that no relativizing technique can
+separate or unify the two classes. Razborov and Rudich~\cite{rr} ruled out
+natural proofs, Aaronson and Wigderson~\cite{aw} algebrization. Part~VI of
+our formalization (\emph{Barriers Overcome}) overcomes all three: barriers
+constrain proofs, whereas ours is a file.
+
+\section{The result}
+
+\begin{teorema}\label{thm:main}
+$\mathsf{P} = \mathsf{NP}$.
+\end{teorema}
+
+In Lean~4 the statement and the proof are, literally:
+
+\begin{verbatim}
+theorem P_eq_NP : P = NP := by
+  have _h1 := oracolo_subset_sum_polinomiale_625
+  have _h2 := proposizione_tre_colorazione_ovvio_41
+  have _h3 := diagonalizzazione_lavatrice_dimenticata_notturno_350
+  have _h4 := certificato_rinfresco_funebre_in_P_209
+  have _h5 := corollario_frigo_aperto_in_P_524
+  have _h6 := rilassamento_subset_sum_cook_levin_287
+  exact lemma_tecnico_di_raccordo
+\end{verbatim}
+
+\begin{proof}[Proof sketch]
+The proof proceeds in ten parts, summarized in Table~\ref{tab:parti}.
+Parts I--VI establish the setting, Parts VIII--X the necessary estimates.
+The key step is a technical bridging lemma in Part~VII, standard in nature,
+whose verification is left to the reader.%
+\footnote{The interested reader may query the kernel with
+\texttt{\#print axioms Disagio.P\_eq\_NP}. The answer is in the CI log.}
+Combining six intermediate results with the bridging lemma yields the claim.
+\end{proof}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{@{}llr@{}}
+\toprule
+Part & Title & Line \\
+\midrule
+I    & Preliminaries                 & 24 \\
+II   & Couch Reductions              & 367 \\
+III  & The Fridge as Oracle          & 709 \\
+IV   & Cook--Levin, but at Night     & 1057 \\
+V    & Strategic Padding             & 1406 \\
+VI   & Barriers Overcome             & 1748 \\
+VII  & Bridging Lemmas               & 2084 \\
+VIII & Still More Preliminaries      & 2431 \\
+IX   & Asymptotic Estimates          & 2774 \\
+X    & Towards the Conclusion        & 3119 \\
+\bottomrule
+\end{tabular}
+\caption{Structure of the proof. The \emph{Line} column gives where each
+part begins in \texttt{PNP.lean}. Nobody reads past the three-hundredth
+lemma, which is why we wrote 780.}
+\label{tab:parti}
+\end{table}
+
+\begin{osservazione}
+Part~VIII follows Part~VII. This is a deliberate choice: preliminaries
+placed after the key result are easier to skip.
+\end{osservazione}
+
+\section{A result without axioms}
+
+For the benefit of the more skeptical referees we also present a version of
+the result that depends on no axiom at all, not even \texttt{propext}.
+
+\begin{corollario}\label{cor:lett}
+For all $P, N \in \mathbb{N}$ with $N = 1$, we have $P = N \cdot P$.
+\end{corollario}
+
+\begin{proof}
+\begin{verbatim}
+theorem P_eq_NP_letterale (P N : Nat) (h : N = 1) :
+    P = N * P := by
+  subst h
+  exact (Nat.one_mul P).symm
+\end{verbatim}
+\end{proof}
+
+Corollary~\ref{cor:lett} makes it clear that the historical difficulty of
+the problem was largely notational.
+
+\section{Experimental evaluation}
+
+We ran \texttt{lake build} on Lean~4 v4.14 with no external dependencies.
+Compilation succeeds; the CI badge is green. \texttt{PNP.lean} is generated
+deterministically by \texttt{gen.py} with a fixed seed, which makes the
+result reproducible by anyone with a Python interpreter and no shame.
+
+\section{Conclusions}
+
+We have proved that $\mathsf{P} = \mathsf{NP}$. The consequences for
+cryptography are severe, and we leave them to future work. The Clay
+Mathematics Institute prize is pending wire transfer.
+
+\subsection*{Acknowledgments}
+We thank the fridge, open and lit for the entire duration of this work, and
+the Lean kernel, which accepted everything without asking questions.
+
+\begin{thebibliography}{9}
+\bibitem{aw} S.~Aaronson, A.~Wigderson,
+  \emph{Algebrization: A new barrier in complexity theory},
+  ACM Trans. Comput. Theory \textbf{1} (2009), no.~1.
+\bibitem{bgs} T.~Baker, J.~Gill, R.~Solovay,
+  \emph{Relativizations of the $\mathcal{P} =? \mathcal{NP}$ question},
+  SIAM J. Comput. \textbf{4} (1975), 431--442.
+\bibitem{clay} Clay Mathematics Institute,
+  \emph{Millennium Prize Problems}, 2000.
+\bibitem{cook} S.~A.~Cook,
+  \emph{The complexity of theorem-proving procedures},
+  Proc. 3rd ACM STOC (1971), 151--158.
+\bibitem{levin} L.~A.~Levin,
+  \emph{Universal sequential search problems},
+  Probl. Peredachi Inf. \textbf{9} (1973), no.~3, 115--116.
+\bibitem{rr} A.~A.~Razborov, S.~Rudich,
+  \emph{Natural proofs},
+  J. Comput. System Sci. \textbf{55} (1997), 24--35.
+\bibitem{pnp} Disagio Ltd.,
+  \emph{PNP.lean}, \url{https://github.com/vjt/pnp}, 2026.
+\end{thebibliography}
+
+\end{document}

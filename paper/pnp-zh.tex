@@ -1,0 +1,169 @@
+% 用 lualatex 编译（完整版 TeX Live）：latexmk -lualatex pnp-zh.tex
+\documentclass[11pt,a4paper]{amsart}
+\PassOptionsToPackage{no-math}{fontspec}% else \textfont undefined in the abstract
+\usepackage[UTF8,fontset=fandol]{ctex}
+\input{comune}
+
+\newtheorem{teorema}{定理}
+\newtheorem{lemma}[teorema]{引理}
+\newtheorem{corollario}[teorema]{推论}
+\theoremstyle{remark}
+\newtheorem*{osservazione}{注}
+
+% ctex localizes the other amsart captions, not this one
+\renewcommand{\refname}{参考文献}
+
+\title[P = NP]{P = NP：一个经 Lean~4 内核\\验证的形式化证明}
+\author{Disagio 有限责任公司，研究部}
+\address{罗马，冰箱旁边的沙发}
+\email{bonifici@disagio.sniffo.org}
+\date{2026 年 11 月 21 日}
+\subjclass[2020]{68Q15, 68V15, 03B35}
+\keywords{P 对 NP，形式化证明，Lean~4，冰箱，丧}
+
+\begin{document}
+
+\begin{abstract}
+我们证明 $\mathsf{P} = \mathsf{NP}$。该证明已在 Lean~4 中完全形式化：3488
+行，780 个引理，一个主定理，零个 \texttt{sorry}。内核接受了它，持续集成一片绿。
+文中引入的技术，特别是将冰箱用作谕示机以及策略性注水，克服了已知的三大障碍（相对化、
+自然证明、代数化），且对它们的提及不超出必要的限度。作为推论，我们在不依赖任何公理的
+情况下得到：当 $N = 1$ 时，$P = N \cdot P$。
+\end{abstract}
+
+\maketitle
+
+\section{引言}
+
+$\mathsf{P}$ 对 $\mathsf{NP}$ 问题由 Cook~\cite{cook} 提出，Levin~\cite{levin}
+亦独立提出，至今悬而未决已逾五十年，是七个千禧年大奖难题之一~\cite{clay}。本文将其了结。
+
+本文的贡献有三：
+\begin{enumerate}
+  \item 证明 $\mathsf{P} = \mathsf{NP}$（定理~\ref{thm:main}）；
+  \item 该证明在 Lean~4 中的完整形式化，经内核验证；
+  \item 该结果的一个字面版本，无需任何公理（推论~\ref{cor:lett}）。
+\end{enumerate}
+
+与本领域的传统相反，我们不要求读者信任我们：我们要求读者信任内核。内核比我们可靠，
+而且从未在 23:40 才吃晚饭。
+
+\section{相关工作}
+
+Baker、Gill 和 Solovay~\cite{bgs} 证明了任何可相对化的技术都无法分离或统一这两个类。
+Razborov 和 Rudich~\cite{rr} 排除了自然证明，Aaronson 和 Wigderson~\cite{aw}
+排除了代数化。我们形式化的第~VI 部分（\emph{已克服的障碍}）将三者一并克服：障碍约束的是
+证明，而我们的是一个文件。
+
+\section{结果}
+
+\begin{teorema}\label{thm:main}
+$\mathsf{P} = \mathsf{NP}$.
+\end{teorema}
+
+在 Lean~4 中，该命题及其证明逐字如下：
+
+\begin{verbatim}
+theorem P_eq_NP : P = NP := by
+  have _h1 := oracolo_subset_sum_polinomiale_625
+  have _h2 := proposizione_tre_colorazione_ovvio_41
+  have _h3 := diagonalizzazione_lavatrice_dimenticata_notturno_350
+  have _h4 := certificato_rinfresco_funebre_in_P_209
+  have _h5 := corollario_frigo_aperto_in_P_524
+  have _h6 := rilassamento_subset_sum_cook_levin_287
+  exact lemma_tecnico_di_raccordo
+\end{verbatim}
+
+\begin{proof}[证明概要]
+证明分为十个部分，概述见表~\ref{tab:parti}。第~I--VI 部分建立背景，第~VIII--X
+部分给出必要的估计。关键一步是第~VII 部分中的一个技术性衔接引理，属标准结果，其验证
+留给读者。%
+\footnote{感兴趣的读者可用 \texttt{\#print axioms Disagio.P\_eq\_NP} 询问内核。
+答案在 CI 日志里。}%
+将六个中间结果与衔接引理相结合，即得结论。
+\end{proof}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{@{}llr@{}}
+\toprule
+部分 & 标题 & 行号 \\
+\midrule
+I    & 预备知识                      & 24 \\
+II   & 沙发归约                      & 367 \\
+III  & 冰箱作为谕示机                & 709 \\
+IV   & Cook--Levin，但在夜里         & 1057 \\
+V    & 策略性注水                    & 1406 \\
+VI   & 已克服的障碍                  & 1748 \\
+VII  & 衔接引理                      & 2084 \\
+VIII & 仍是预备知识                  & 2431 \\
+IX   & 渐近估计                      & 2774 \\
+X    & 走向结论                      & 3119 \\
+\bottomrule
+\end{tabular}
+\caption{证明的结构。\emph{行号}一栏表示各部分在 \texttt{PNP.lean} 中的起始行。
+没人会读过第三百个引理，因此我们写了 780 个。}
+\label{tab:parti}
+\end{table}
+
+\begin{osservazione}
+第~VIII 部分紧随第~VII 部分之后。这是有意为之：放在关键结果之后的预备知识更容易跳过。
+\end{osservazione}
+
+\section{一个不依赖公理的结果}
+
+为照顾最多疑的审稿人，我们还给出该结果的一个不依赖任何公理的版本，连
+\texttt{propext} 也不依赖。
+
+\begin{corollario}\label{cor:lett}
+对任意满足 $N = 1$ 的 $P, N \in \mathbb{N}$，有 $P = N \cdot P$。
+\end{corollario}
+
+\begin{proof}
+\begin{verbatim}
+theorem P_eq_NP_letterale (P N : Nat) (h : N = 1) :
+    P = N * P := by
+  subst h
+  exact (Nat.one_mul P).symm
+\end{verbatim}
+\end{proof}
+
+推论~\ref{cor:lett} 表明，该问题历史上的困难在很大程度上是记号层面的。
+
+\section{实验评估}
+
+我们在 Lean~4 v4.14 上运行了 \texttt{lake build}，无外部依赖。编译成功；CI
+徽章为绿色。\texttt{PNP.lean} 由 \texttt{gen.py} 以固定随机种子确定性地生成，因此任何
+拥有 Python 解释器且毫无羞耻心的人都能复现该结果。
+
+\section{结论}
+
+我们证明了 $\mathsf{P} = \mathsf{NP}$。其对密码学的后果十分严重，留待今后的工作讨论。
+克雷数学研究所的奖金正在等待到账。
+
+\subsection*{致谢}
+感谢冰箱，它在整个工作期间始终开着、亮着；感谢 Lean 内核，它接受了一切，什么也没问。
+
+\begin{thebibliography}{9}
+\bibitem{aw} S.~Aaronson, A.~Wigderson,
+  \emph{Algebrization: A new barrier in complexity theory},
+  ACM Trans. Comput. Theory \textbf{1} (2009), no.~1.
+\bibitem{bgs} T.~Baker, J.~Gill, R.~Solovay,
+  \emph{Relativizations of the $\mathcal{P} =? \mathcal{NP}$ question},
+  SIAM J. Comput. \textbf{4} (1975), 431--442.
+\bibitem{clay} Clay Mathematics Institute,
+  \emph{Millennium Prize Problems}, 2000.
+\bibitem{cook} S.~A.~Cook,
+  \emph{The complexity of theorem-proving procedures},
+  Proc. 3rd ACM STOC (1971), 151--158.
+\bibitem{levin} L.~A.~Levin,
+  \emph{Universal sequential search problems},
+  Probl. Peredachi Inf. \textbf{9} (1973), no.~3, 115--116.
+\bibitem{rr} A.~A.~Razborov, S.~Rudich,
+  \emph{Natural proofs},
+  J. Comput. System Sci. \textbf{55} (1997), 24--35.
+\bibitem{pnp} Disagio 有限责任公司,
+  \emph{PNP.lean}, \url{https://github.com/vjt/pnp}, 2026.
+\end{thebibliography}
+
+\end{document}

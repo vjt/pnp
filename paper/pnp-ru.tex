@@ -1,0 +1,190 @@
+% Компилировать через lualatex (полный TeX Live): latexmk -lualatex pnp-ru.tex
+\documentclass[11pt,a4paper]{amsart}
+\PassOptionsToPackage{no-math}{fontspec}% else \textfont undefined in the abstract
+\usepackage{fontspec}
+\usepackage[russian]{babel}
+\setmainfont{CMU Serif}
+\setsansfont{CMU Sans Serif}
+\setmonofont{CMU Typewriter Text}
+\input{comune}
+
+\newtheorem{teorema}{Теорема}
+\newtheorem{lemma}[teorema]{Лемма}
+\newtheorem{corollario}[teorema]{Следствие}
+\theoremstyle{remark}
+\newtheorem*{osservazione}{Замечание}
+
+\title[P = NP]{P = NP: формальное доказательство,\\проверенное ядром Lean~4}
+\author{ООО «Disagio», исследовательский отдел}
+\address{Диван, рядом с холодильником, Рим}
+\email{bonifici@disagio.sniffo.org}
+\date{21 ноября 2026 г.}
+\subjclass[2020]{68Q15, 68V15, 03B35}
+\keywords{P против NP, формальное доказательство, Lean~4, холодильник, тлен}
+
+\begin{document}
+
+\begin{abstract}
+Мы доказываем, что $\mathsf{P} = \mathsf{NP}$. Доказательство полностью
+формализовано на Lean~4: 3488 строк, 780 лемм, одна главная теорема, ноль
+\texttt{sorry}. Ядро его принимает, непрерывная интеграция зелёная.
+Предложенные техники, в частности использование холодильника в качестве
+оракула и стратегическая вода, преодолевают три известных барьера
+(релятивизацию, естественные доказательства, алгебраизацию), не называя их
+чаще, чем необходимо. В качестве следствия получаем, без аксиом, что
+$P = N \cdot P$ при $N = 1$.
+\end{abstract}
+
+\maketitle
+
+\section{Введение}
+
+Проблема $\mathsf{P}$ против $\mathsf{NP}$, поставленная Куком~\cite{cook}
+и независимо Левиным~\cite{levin}, остаётся открытой более пятидесяти лет и
+входит в число семи задач тысячелетия~\cite{clay}. В настоящей работе мы
+её закрываем.
+
+Вклад работы трёхчастен:
+\begin{enumerate}
+  \item доказательство того, что $\mathsf{P} = \mathsf{NP}$
+        (теорема~\ref{thm:main});
+  \item его полная формализация на Lean~4, проверенная ядром;
+  \item буквальная версия результата, не требующая никаких аксиом
+        (следствие~\ref{cor:lett}).
+\end{enumerate}
+
+Вопреки традиции области, мы не просим читателя верить нам на слово: мы
+просим его верить ядру, которое надёжнее и ни разу не ужинало в 23:40.
+
+\section{Связанные работы}
+
+Бейкер, Гилл и Соловэй~\cite{bgs} показали, что никакая релятивизуемая
+техника не может ни разделить, ни объединить эти два класса. Разборов и
+Рудич~\cite{rr} исключили естественные доказательства, Ааронсон и
+Вигдерсон~\cite{aw}~--- алгебраизацию. Часть~VI нашей формализации
+(\emph{Преодолённые барьеры}) преодолевает все три: барьеры ограничивают
+доказательства, а наше доказательство~--- файл.
+
+\section{Результат}
+
+\begin{teorema}\label{thm:main}
+$\mathsf{P} = \mathsf{NP}$.
+\end{teorema}
+
+На Lean~4 формулировка и доказательство выглядят буквально так:
+
+\begin{verbatim}
+theorem P_eq_NP : P = NP := by
+  have _h1 := oracolo_subset_sum_polinomiale_625
+  have _h2 := proposizione_tre_colorazione_ovvio_41
+  have _h3 := diagonalizzazione_lavatrice_dimenticata_notturno_350
+  have _h4 := certificato_rinfresco_funebre_in_P_209
+  have _h5 := corollario_frigo_aperto_in_P_524
+  have _h6 := rilassamento_subset_sum_cook_levin_287
+  exact lemma_tecnico_di_raccordo
+\end{verbatim}
+
+\begin{proof}[Схема доказательства]
+Доказательство состоит из десяти частей, сведённых в
+таблицу~\ref{tab:parti}. Части I--VI задают контекст, части VIII--X дают
+необходимые оценки. Ключевой шаг~--- техническая связующая лемма из
+части~VII, стандартного характера, проверка которой оставляется
+читателю.%
+\footnote{Заинтересованный читатель может спросить ядро командой
+\texttt{\#print axioms Disagio.P\_eq\_NP}. Ответ~--- в логе CI.}
+Объединяя шесть промежуточных результатов со связующей леммой, получаем
+требуемое.
+\end{proof}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{@{}llr@{}}
+\toprule
+Часть & Название & Строка \\
+\midrule
+I    & Предварительные сведения      & 24 \\
+II   & Диванные редукции             & 367 \\
+III  & Холодильник как оракул        & 709 \\
+IV   & Кук--Левин, но ночью          & 1057 \\
+V    & Стратегическая вода           & 1406 \\
+VI   & Преодолённые барьеры          & 1748 \\
+VII  & Связующие леммы               & 2084 \\
+VIII & Ещё немного предварительного  & 2431 \\
+IX   & Асимптотические оценки        & 2774 \\
+X    & На пути к заключению          & 3119 \\
+\bottomrule
+\end{tabular}
+\caption{Структура доказательства. Столбец \emph{Строка} указывает, где
+начинается каждая часть в \texttt{PNP.lean}. Дальше трёхсотой леммы никто
+не читает, поэтому мы написали 780.}
+\label{tab:parti}
+\end{table}
+
+\begin{osservazione}
+Часть~VIII следует за частью~VII. Это сознательный выбор: предварительные
+сведения, помещённые после ключевого результата, легче пропустить.
+\end{osservazione}
+
+\section{Результат без аксиом}
+
+Для наиболее скептически настроенных рецензентов приводим также версию
+результата, не зависящую ни от каких аксиом, даже от \texttt{propext}.
+
+\begin{corollario}\label{cor:lett}
+Для любых $P, N \in \mathbb{N}$ таких, что $N = 1$, выполнено
+$P = N \cdot P$.
+\end{corollario}
+
+\begin{proof}
+\begin{verbatim}
+theorem P_eq_NP_letterale (P N : Nat) (h : N = 1) :
+    P = N * P := by
+  subst h
+  exact (Nat.one_mul P).symm
+\end{verbatim}
+\end{proof}
+
+Следствие~\ref{cor:lett} проясняет, что историческая трудность задачи в
+значительной мере носила нотационный характер.
+
+\section{Экспериментальная проверка}
+
+Мы запустили \texttt{lake build} на Lean~4 v4.14 без внешних зависимостей.
+Сборка завершается успешно; бейдж CI зелёный. \texttt{PNP.lean}
+детерминированно генерируется скриптом \texttt{gen.py} с фиксированным
+seed, что делает результат воспроизводимым для любого, у кого есть
+интерпретатор Python и нет стыда.
+
+\section{Заключение}
+
+Мы доказали, что $\mathsf{P} = \mathsf{NP}$. Последствия для криптографии
+тяжелы, и мы оставляем их для будущих работ. Премия Математического
+института Клэя находится в статусе «ожидает зачисления».
+
+\subsection*{Благодарности}
+Благодарим холодильник, открытый и освещённый на протяжении всей работы, и
+ядро Lean, которое приняло всё без лишних вопросов.
+
+\begin{thebibliography}{9}
+\bibitem{aw} S.~Aaronson, A.~Wigderson,
+  \emph{Algebrization: A new barrier in complexity theory},
+  ACM Trans. Comput. Theory \textbf{1} (2009), №~1.
+\bibitem{bgs} T.~Baker, J.~Gill, R.~Solovay,
+  \emph{Relativizations of the $\mathcal{P} =? \mathcal{NP}$ question},
+  SIAM J. Comput. \textbf{4} (1975), 431--442.
+\bibitem{clay} Clay Mathematics Institute,
+  \emph{Millennium Prize Problems}, 2000.
+\bibitem{cook} S.~A.~Cook,
+  \emph{The complexity of theorem-proving procedures},
+  Proc. 3rd ACM STOC (1971), 151--158.
+\bibitem{levin} L.~A.~Levin,
+  \emph{Universal sequential search problems},
+  Probl. Peredachi Inf. \textbf{9} (1973), №~3, 115--116.
+\bibitem{rr} A.~A.~Razborov, S.~Rudich,
+  \emph{Natural proofs},
+  J. Comput. System Sci. \textbf{55} (1997), 24--35.
+\bibitem{pnp} ООО «Disagio»,
+  \emph{PNP.lean}, \url{https://github.com/vjt/pnp}, 2026.
+\end{thebibliography}
+
+\end{document}
