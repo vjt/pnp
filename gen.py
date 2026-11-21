@@ -74,7 +74,7 @@ def enunciato(r):
     if t == 1:
         return "(a b : Nat) : a + b = b + a", "Nat.add_comm a b"
     if t == 2:
-        return f"({a} : Nat) * {b} = {a * b}", "by decide"
+        return f": ({a} : Nat) * {b} = {a * b}", "by decide"
     if t == 3:
         return "(a b : Nat) (h : a < b) : a + 1 ≤ b", "by omega"
     if t == 4:

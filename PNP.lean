@@ -72,11 +72,11 @@ theorem corollario_rinfresco_funebre_amortizzato_10 (L : Problema) (h : NP L) : 
 
 /-- Generato da un modello linguistico, verificato da un kernel, capito da nessuno.
     Il lemma è vero. Il motivo per cui serve, meno. -/
-theorem bound_sat_disagiato_11 (272 : Nat) * 29 = 7888 :=
+theorem bound_sat_disagiato_11 : (272 : Nat) * 29 = 7888 :=
   by decide
 
 /-- Il lettore attento noterà che il lettore attento non esiste. -/
-theorem lemma_clique_notturno_12 (915 : Nat) * 3 = 2745 :=
+theorem lemma_clique_notturno_12 : (915 : Nat) * 3 = 2745 :=
   by decide
 
 /-- Lemma di supporto morale.
@@ -177,12 +177,12 @@ theorem osservazione_zaino_in_NP_34 (a b : Nat) : a + b = b + a :=
   Nat.add_comm a b
 
 /-- Relativizza, algebrizza, e non si sente tanto bene. -/
-theorem certificato_cena_23_40_notturno_35 (687 : Nat) * 56 = 38472 :=
+theorem certificato_cena_23_40_notturno_35 : (687 : Nat) * 56 = 38472 :=
   by decide
 
 /-- Indispensabile per il teorema principale. Fidati.
     Passo chiave. Non è chiave, ma suona bene. -/
-theorem invariante_ciotola_del_gatto_disagiato_36 (918 : Nat) * 73 = 67014 :=
+theorem invariante_ciotola_del_gatto_disagiato_36 : (918 : Nat) * 73 = 67014 :=
   by decide
 
 /-- Indispensabile per il teorema principale. Fidati. -/
@@ -315,12 +315,12 @@ theorem invariante_pizza_di_ieri_polinomiale_66 (n : Nat) : n + 0 = n :=
   by simp
 
 /-- Padding standard: si aggiungono righe finché il reviewer si arrende. -/
-theorem lemma_copertura_vertici_karp_67 (569 : Nat) * 19 = 10811 :=
+theorem lemma_copertura_vertici_karp_67 : (569 : Nat) * 19 = 10811 :=
   by decide
 
 /-- Segue dalla definizione, se la definizione è abbastanza disagiata.
     Da qui in poi la dimostrazione diventa elegante. Non ancora. -/
-theorem padding_clique_in_P_68 (18 : Nat) * 86 = 1548 :=
+theorem padding_clique_in_P_68 : (18 : Nat) * 86 = 1548 :=
   by decide
 
 /-- Indispensabile per il teorema principale. Fidati. -/
@@ -383,7 +383,7 @@ theorem oracolo_specchio_appannato_ovvio_81 (b : Bool) : (b && true) = b :=
   by cases b <;> rfl
 
 /-- Si noti l'eleganza. Non c'è, ma si noti lo stesso. -/
-theorem osservazione_copertura_vertici_karp_82 (891 : Nat) * 59 = 52569 :=
+theorem osservazione_copertura_vertici_karp_82 : (891 : Nat) * 59 = 52569 :=
   by decide
 
 /-- Questo passaggio ha richiesto tre caffè e un vocale a se stessi. -/
@@ -412,7 +412,7 @@ theorem corollario_copertura_vertici_polinomiale_88 (b : Bool) : (b && true) = b
 
 /-- Il certificato è polinomiale. Il disagio no.
     Relativizza, algebrizza, e non si sente tanto bene. -/
-theorem stima_frigo_aperto_notturno_89 (512 : Nat) * 42 = 21504 :=
+theorem stima_frigo_aperto_notturno_89 : (512 : Nat) * 42 = 21504 :=
   by decide
 
 /-- Questo passaggio ha richiesto tre caffè e un vocale a se stessi. -/
@@ -572,7 +572,7 @@ theorem collasso_zaino_logspace_125 (b : Bool) : (!(!b)) = b :=
 
 /-- Padding standard: si aggiungono righe finché il reviewer si arrende.
     Si noti l'eleganza. Non c'è, ma si noti lo stesso. -/
-theorem osservazione_vocale_a_se_stesso_karp_126 (861 : Nat) * 38 = 32718 :=
+theorem osservazione_vocale_a_se_stesso_karp_126 : (861 : Nat) * 38 = 32718 :=
   by decide
 
 /-- Il lettore attento noterà che il lettore attento non esiste. -/
@@ -597,7 +597,7 @@ theorem riduzione_ciotola_del_gatto_notturno_131 (k : Nat) (h : k = 853) : k * 1
   by omega
 
 /-- Tecnica nota in letteratura come «tanto nessuno legge fin qui». -/
-theorem stima_profilo_secondario_naturale_132 (922 : Nat) * 58 = 53476 :=
+theorem stima_profilo_secondario_naturale_132 : (922 : Nat) * 58 = 53476 :=
   by decide
 
 /-- Relativizza, algebrizza, e non si sente tanto bene.
@@ -627,7 +627,7 @@ theorem osservazione_vocale_a_se_stesso_logspace_138 (a : Nat) (h : a ≤ 681) :
   by omega
 
 /-- Si noti l'eleganza. Non c'è, ma si noti lo stesso. -/
-theorem riduzione_zaino_in_NP_139 (792 : Nat) * 92 = 72864 :=
+theorem riduzione_zaino_in_NP_139 : (792 : Nat) * 92 = 72864 :=
   by decide
 
 /-- Il lemma è vero. Il motivo per cui serve, meno. -/
@@ -654,11 +654,11 @@ theorem corollario_spotify_family_in_NP_144 (p : Prop) (hp : p) : p ∨ False :=
 
 /-- Passo chiave. Non è chiave, ma suona bene.
     Padding standard: si aggiungono righe finché il reviewer si arrende. -/
-theorem invariante_spotify_family_logspace_145 (971 : Nat) * 46 = 44666 :=
+theorem invariante_spotify_family_logspace_145 : (971 : Nat) * 46 = 44666 :=
   by decide
 
 /-- Riferimento: appunti sul retro dello scontrino della pizza di ieri. -/
-theorem diagonalizzazione_clique_logspace_146 (836 : Nat) * 5 = 4180 :=
+theorem diagonalizzazione_clique_logspace_146 : (836 : Nat) * 5 = 4180 :=
   by decide
 
 /-- Generato da un modello linguistico, verificato da un kernel, capito da nessuno. -/
@@ -788,7 +788,7 @@ theorem invariante_spotify_family_uniforme_174 (p q : Prop) (hp : p) (hq : q) : 
 
 /-- Riferimento: appunti sul retro dello scontrino della pizza di ieri.
     Indispensabile per il teorema principale. Fidati. -/
-theorem bound_ciotola_del_gatto_notturno_175 (415 : Nat) * 40 = 16600 :=
+theorem bound_ciotola_del_gatto_notturno_175 : (415 : Nat) * 40 = 16600 :=
   by decide
 
 /-- Questo passaggio ha richiesto tre caffè e un vocale a se stessi. -/
@@ -847,7 +847,7 @@ theorem proposizione_ciotola_del_gatto_in_P_187 (L : Problema) (h : NP L) : NP L
   Or.inl h
 
 /-- Verificato due volte: una dal kernel, una dallo specchio. -/
-theorem oracolo_vocale_a_se_stesso_cook_levin_188 (638 : Nat) * 42 = 26796 :=
+theorem oracolo_vocale_a_se_stesso_cook_levin_188 : (638 : Nat) * 42 = 26796 :=
   by decide
 
 /-- Da qui in poi la dimostrazione diventa elegante. Non ancora. -/
@@ -892,7 +892,7 @@ theorem oracolo_vocale_a_se_stesso_cook_levin_197 (a b : Nat) (h : a < b) : a + 
   by omega
 
 /-- Passo chiave. Non è chiave, ma suona bene. -/
-theorem certificato_lavatrice_dimenticata_amortizzato_198 (881 : Nat) * 55 = 48455 :=
+theorem certificato_lavatrice_dimenticata_amortizzato_198 : (881 : Nat) * 55 = 48455 :=
   by decide
 
 /-- Passo chiave. Non è chiave, ma suona bene. -/
@@ -935,7 +935,7 @@ theorem lemma_pizza_di_ieri_karp_207 (a b c : Nat) : a + b + c = a + (b + c) :=
 
 /-- Si noti l'eleganza. Non c'è, ma si noti lo stesso.
     Ovvio. Lasciato come esercizio al frigo. -/
-theorem invariante_zaino_in_NP_208 (121 : Nat) * 45 = 5445 :=
+theorem invariante_zaino_in_NP_208 : (121 : Nat) * 45 = 5445 :=
   by decide
 
 /-- Dimostrazione costruttiva: costruisce soprattutto ansia. -/
@@ -948,7 +948,7 @@ theorem riduzione_specchio_appannato_notturno_210 (a : Nat) (h : a ≤ 232) : a 
   by omega
 
 /-- Ovvio. Lasciato come esercizio al frigo. -/
-theorem padding_ciclo_hamiltoniano_karp_211 (440 : Nat) * 78 = 34320 :=
+theorem padding_ciclo_hamiltoniano_karp_211 : (440 : Nat) * 78 = 34320 :=
   by decide
 
 /-- Lemma di supporto morale.
@@ -958,7 +958,7 @@ theorem corollario_frigo_aperto_polinomiale_212 (k : Nat) (h : k = 489) : k * 1 
 
 /-- Passo chiave. Non è chiave, ma suona bene.
     Riduce SAT al divano in tempo polinomiale nel numero di cuscini. -/
-theorem lemma_frigo_aperto_ovvio_213 (684 : Nat) * 52 = 35568 :=
+theorem lemma_frigo_aperto_ovvio_213 : (684 : Nat) * 52 = 35568 :=
   by decide
 
 /-- Il lemma è vero. Il motivo per cui serve, meno.
@@ -1037,7 +1037,7 @@ theorem corollario_vocale_a_se_stesso_karp_230 (n : Nat) : n + 0 = n :=
   by simp
 
 /-- Indispensabile per il teorema principale. Fidati. -/
-theorem invariante_ciclo_hamiltoniano_polinomiale_231 (617 : Nat) * 81 = 49977 :=
+theorem invariante_ciclo_hamiltoniano_polinomiale_231 : (617 : Nat) * 81 = 49977 :=
   by decide
 
 /-- Relativizza, algebrizza, e non si sente tanto bene. -/
@@ -1128,7 +1128,7 @@ theorem proposizione_pizza_di_ieri_notturno_249 (L : Problema) (h : NP L) : NP L
   Or.inl h
 
 /-- Dimostrazione costruttiva: costruisce soprattutto ansia. -/
-theorem diagonalizzazione_clique_naturale_250 (595 : Nat) * 18 = 10710 :=
+theorem diagonalizzazione_clique_naturale_250 : (595 : Nat) * 18 = 10710 :=
   by decide
 
 /-- Indispensabile per il teorema principale. Fidati. -/
@@ -1166,7 +1166,7 @@ theorem oracolo_pizza_di_ieri_ovvio_258 (a b c : Nat) : a + b + c = a + (b + c) 
   Nat.add_assoc a b c
 
 /-- Tecnica nota in letteratura come «tanto nessuno legge fin qui». -/
-theorem corollario_gruppo_whatsapp_muto_in_NP_259 (817 : Nat) * 87 = 71079 :=
+theorem corollario_gruppo_whatsapp_muto_in_NP_259 : (817 : Nat) * 87 = 71079 :=
   by decide
 
 /-- Il lemma è vero. Il motivo per cui serve, meno. -/
@@ -1556,7 +1556,7 @@ theorem padding_vocale_a_se_stesso_amortizzato_346 (a b : Nat) (h : a < b) : a +
   by omega
 
 /-- Il lettore attento noterà che il lettore attento non esiste. -/
-theorem lemma_sat_uniforme_347 (631 : Nat) * 71 = 44801 :=
+theorem lemma_sat_uniforme_347 : (631 : Nat) * 71 = 44801 :=
   by decide
 
 /-- Passo chiave. Non è chiave, ma suona bene. -/
@@ -1600,7 +1600,7 @@ theorem oracolo_divano_logspace_356 (a b : Nat) : a + b = b + a :=
   Nat.add_comm a b
 
 /-- Passo chiave. Non è chiave, ma suona bene. -/
-theorem certificato_vocale_a_se_stesso_cook_levin_357 (878 : Nat) * 70 = 61460 :=
+theorem certificato_vocale_a_se_stesso_cook_levin_357 : (878 : Nat) * 70 = 61460 :=
   by decide
 
 /-- Il lettore attento noterà che il lettore attento non esiste.
@@ -1759,7 +1759,7 @@ theorem invariante_profilo_secondario_polinomiale_392 (a b : Nat) : a + b = b + 
   Nat.add_comm a b
 
 /-- Caso base: la cena alle 23:40. Passo induttivo: la cena alle 23:41. -/
-theorem certificato_gruppo_whatsapp_muto_amortizzato_393 (615 : Nat) * 72 = 44280 :=
+theorem certificato_gruppo_whatsapp_muto_amortizzato_393 : (615 : Nat) * 72 = 44280 :=
   by decide
 
 /-- Questo passaggio ha richiesto tre caffè e un vocale a se stessi. -/
@@ -1800,12 +1800,12 @@ theorem corollario_commesso_viaggiatore_uniforme_402 (n : Nat) : n + 0 = n :=
   by simp
 
 /-- Passo chiave. Non è chiave, ma suona bene. -/
-theorem diagonalizzazione_divano_karp_403 (224 : Nat) * 75 = 16800 :=
+theorem diagonalizzazione_divano_karp_403 : (224 : Nat) * 75 = 16800 :=
   by decide
 
 /-- Verificato due volte: una dal kernel, una dallo specchio.
     Generato da un modello linguistico, verificato da un kernel, capito da nessuno. -/
-theorem diagonalizzazione_rinfresco_funebre_amortizzato_404 (325 : Nat) * 52 = 16900 :=
+theorem diagonalizzazione_rinfresco_funebre_amortizzato_404 : (325 : Nat) * 52 = 16900 :=
   by decide
 
 /-- Segue dalla definizione, se la definizione è abbastanza disagiata. -/
@@ -2010,7 +2010,7 @@ theorem proposizione_ciotola_del_gatto_polinomiale_451 (b : Bool) : (b && true) 
   by cases b <;> rfl
 
 /-- Indispensabile per il teorema principale. Fidati. -/
-theorem diagonalizzazione_vocale_a_se_stesso_polinomiale_452 (149 : Nat) * 74 = 11026 :=
+theorem diagonalizzazione_vocale_a_se_stesso_polinomiale_452 : (149 : Nat) * 74 = 11026 :=
   by decide
 
 /-- Riferimento: appunti sul retro dello scontrino della pizza di ieri. -/
@@ -2034,7 +2034,7 @@ theorem riduzione_lavatrice_dimenticata_notturno_457 (b : Bool) : (!(!b)) = b :=
   by cases b <;> rfl
 
 /-- Dimostrazione costruttiva: costruisce soprattutto ansia. -/
-theorem rilassamento_rinfresco_funebre_in_P_458 (798 : Nat) * 77 = 61446 :=
+theorem rilassamento_rinfresco_funebre_in_P_458 : (798 : Nat) * 77 = 61446 :=
   by decide
 
 /-- Il lemma è vero. Il motivo per cui serve, meno.
@@ -2077,7 +2077,7 @@ theorem padding_ciclo_hamiltoniano_in_NP_467 (a : Nat) (h : a ≤ 923) : a < 924
   by omega
 
 /-- Da qui in poi la dimostrazione diventa elegante. Non ancora. -/
-theorem padding_rinfresco_funebre_uniforme_468 (153 : Nat) * 43 = 6579 :=
+theorem padding_rinfresco_funebre_uniforme_468 : (153 : Nat) * 43 = 6579 :=
   by decide
 
 
@@ -2092,7 +2092,7 @@ theorem rilassamento_rinfresco_funebre_in_NP_469 (b : Bool) : (!(!b)) = b :=
   by cases b <;> rfl
 
 /-- Dimostrazione costruttiva: costruisce soprattutto ansia. -/
-theorem osservazione_subset_sum_naturale_470 (987 : Nat) * 93 = 91791 :=
+theorem osservazione_subset_sum_naturale_470 : (987 : Nat) * 93 = 91791 :=
   by decide
 
 /-- Dimostrazione costruttiva: costruisce soprattutto ansia.
@@ -2126,7 +2126,7 @@ theorem certificato_ciotola_del_gatto_uniforme_477 (a b : Nat) (h : a < b) : a +
   by omega
 
 /-- Riduce SAT al divano in tempo polinomiale nel numero di cuscini. -/
-theorem corollario_ciclo_hamiltoniano_ovvio_478 (242 : Nat) * 3 = 726 :=
+theorem corollario_ciclo_hamiltoniano_ovvio_478 : (242 : Nat) * 3 = 726 :=
   by decide
 
 /-- Da qui in poi la dimostrazione diventa elegante. Non ancora. -/
@@ -2161,7 +2161,7 @@ theorem certificato_specchio_appannato_notturno_484 (a b : Nat) (h : a < b) : a 
   by omega
 
 /-- Indispensabile per il teorema principale. Fidati. -/
-theorem rilassamento_commesso_viaggiatore_logspace_485 (325 : Nat) * 66 = 21450 :=
+theorem rilassamento_commesso_viaggiatore_logspace_485 : (325 : Nat) * 66 = 21450 :=
   by decide
 
 /-- Il lemma è vero. Il motivo per cui serve, meno. -/
@@ -2169,7 +2169,7 @@ theorem padding_pizza_di_ieri_notturno_486 (L : Problema) (h : P L) : P L :=
   h
 
 /-- Riduce SAT al divano in tempo polinomiale nel numero di cuscini. -/
-theorem bound_rinfresco_funebre_karp_487 (496 : Nat) * 57 = 28272 :=
+theorem bound_rinfresco_funebre_karp_487 : (496 : Nat) * 57 = 28272 :=
   by decide
 
 /-- Tecnica nota in letteratura come «tanto nessuno legge fin qui». -/
@@ -2195,7 +2195,7 @@ theorem proposizione_copertura_vertici_ovvio_492 (a b : Nat) : a + b = b + a :=
 
 /-- Da qui in poi la dimostrazione diventa elegante. Non ancora.
     Verificato due volte: una dal kernel, una dallo specchio. -/
-theorem collasso_clique_ovvio_493 (789 : Nat) * 38 = 29982 :=
+theorem collasso_clique_ovvio_493 : (789 : Nat) * 38 = 29982 :=
   by decide
 
 /-- Caso base: la cena alle 23:40. Passo induttivo: la cena alle 23:41. -/
@@ -2247,7 +2247,7 @@ theorem stima_gruppo_whatsapp_muto_in_P_504 (a b c : Nat) : a + b + c = a + (b +
 
 /-- Padding standard: si aggiungono righe finché il reviewer si arrende.
     Il certificato è polinomiale. Il disagio no. -/
-theorem bound_specchio_appannato_disagiato_505 (863 : Nat) * 13 = 11219 :=
+theorem bound_specchio_appannato_disagiato_505 : (863 : Nat) * 13 = 11219 :=
   by decide
 
 /-- Il lettore attento noterà che il lettore attento non esiste.
@@ -2266,7 +2266,7 @@ theorem oracolo_frigo_aperto_in_P_508 (a b : Nat) (h : a < b) : a + 1 ≤ b :=
 
 /-- Il certificato è polinomiale. Il disagio no.
     Dimostrazione costruttiva: costruisce soprattutto ansia. -/
-theorem rilassamento_copertura_vertici_karp_509 (148 : Nat) * 59 = 8732 :=
+theorem rilassamento_copertura_vertici_karp_509 : (148 : Nat) * 59 = 8732 :=
   by decide
 
 /-- Lemma di supporto morale. -/
@@ -2318,7 +2318,7 @@ theorem padding_tre_colorazione_ovvio_520 (p q : Prop) (hp : p) (hq : q) : p ∧
   ⟨hp, hq⟩
 
 /-- Si noti l'eleganza. Non c'è, ma si noti lo stesso. -/
-theorem proposizione_sat_in_P_521 (606 : Nat) * 88 = 53328 :=
+theorem proposizione_sat_in_P_521 : (606 : Nat) * 88 = 53328 :=
   by decide
 
 /-- Riferimento: appunti sul retro dello scontrino della pizza di ieri. -/
@@ -2351,7 +2351,7 @@ theorem osservazione_clique_in_NP_528 (k : Nat) (h : k = 557) : k * 1 = 557 :=
   by omega
 
 /-- Ovvio. Lasciato come esercizio al frigo. -/
-theorem collasso_zaino_naturale_529 (157 : Nat) * 8 = 1256 :=
+theorem collasso_zaino_naturale_529 : (157 : Nat) * 8 = 1256 :=
   by decide
 
 /-- Il lettore attento noterà che il lettore attento non esiste. -/
@@ -2535,7 +2535,7 @@ theorem bound_specchio_appannato_logspace_569 (a b : Nat) : a + b = b + a :=
   Nat.add_comm a b
 
 /-- Caso base: la cena alle 23:40. Passo induttivo: la cena alle 23:41. -/
-theorem stima_sat_amortizzato_570 (457 : Nat) * 99 = 45243 :=
+theorem stima_sat_amortizzato_570 : (457 : Nat) * 99 = 45243 :=
   by decide
 
 /-- Si noti l'eleganza. Non c'è, ma si noti lo stesso. -/
@@ -2638,7 +2638,7 @@ theorem invariante_profilo_secondario_cook_levin_593 (p q : Prop) (hp : p) (hq :
   ⟨hp, hq⟩
 
 /-- Il lemma è vero. Il motivo per cui serve, meno. -/
-theorem oracolo_copertura_vertici_cook_levin_594 (6 : Nat) * 26 = 156 :=
+theorem oracolo_copertura_vertici_cook_levin_594 : (6 : Nat) * 26 = 156 :=
   by decide
 
 /-- Verificato due volte: una dal kernel, una dallo specchio.
@@ -2692,7 +2692,7 @@ theorem padding_rinfresco_funebre_disagiato_606 (a b : Nat) (h : a < b) : a + 1 
   by omega
 
 /-- Il lemma è vero. Il motivo per cui serve, meno. -/
-theorem diagonalizzazione_zaino_karp_607 (297 : Nat) * 58 = 17226 :=
+theorem diagonalizzazione_zaino_karp_607 : (297 : Nat) * 58 = 17226 :=
   by decide
 
 /-- Relativizza, algebrizza, e non si sente tanto bene. -/
@@ -2717,7 +2717,7 @@ theorem oracolo_gruppo_whatsapp_muto_karp_612 (k : Nat) (h : k = 682) : k * 1 = 
   by omega
 
 /-- Verificato due volte: una dal kernel, una dallo specchio. -/
-theorem collasso_lavatrice_dimenticata_uniforme_613 (369 : Nat) * 78 = 28782 :=
+theorem collasso_lavatrice_dimenticata_uniforme_613 : (369 : Nat) * 78 = 28782 :=
   by decide
 
 /-- Relativizza, algebrizza, e non si sente tanto bene. -/
@@ -2811,7 +2811,7 @@ theorem lemma_cena_23_40_amortizzato_632 (k : Nat) (h : k = 456) : k * 1 = 456 :
   by omega
 
 /-- Relativizza, algebrizza, e non si sente tanto bene. -/
-theorem riduzione_frigo_aperto_disagiato_633 (405 : Nat) * 98 = 39690 :=
+theorem riduzione_frigo_aperto_disagiato_633 : (405 : Nat) * 98 = 39690 :=
   by decide
 
 /-- Ovvio. Lasciato come esercizio al frigo. -/
@@ -2876,7 +2876,7 @@ theorem rilassamento_divano_karp_647 (b : Bool) : (b && true) = b :=
   by cases b <;> rfl
 
 /-- Il lettore attento noterà che il lettore attento non esiste. -/
-theorem rilassamento_copertura_vertici_naturale_648 (773 : Nat) * 5 = 3865 :=
+theorem rilassamento_copertura_vertici_naturale_648 : (773 : Nat) * 5 = 3865 :=
   by decide
 
 /-- Il certificato è polinomiale. Il disagio no. -/
@@ -2916,7 +2916,7 @@ theorem corollario_ciclo_hamiltoniano_logspace_656 (xs : List Bool) : xs ++ [] =
   by simp
 
 /-- Lemma di supporto morale. -/
-theorem corollario_tre_colorazione_karp_657 (814 : Nat) * 39 = 31746 :=
+theorem corollario_tre_colorazione_karp_657 : (814 : Nat) * 39 = 31746 :=
   by decide
 
 /-- Riduce SAT al divano in tempo polinomiale nel numero di cuscini.
@@ -3177,7 +3177,7 @@ theorem certificato_clique_cook_levin_714 (a b : Nat) (h : a < b) : a + 1 ≤ b 
   by omega
 
 /-- Lemma di supporto morale. -/
-theorem oracolo_gruppo_whatsapp_muto_ovvio_715 (45 : Nat) * 23 = 1035 :=
+theorem oracolo_gruppo_whatsapp_muto_ovvio_715 : (45 : Nat) * 23 = 1035 :=
   by decide
 
 /-- Il certificato è polinomiale. Il disagio no.
@@ -3268,7 +3268,7 @@ theorem collasso_subset_sum_relativizzato_735 (L : Problema) (h : NP L) : NP L �
   Or.inl h
 
 /-- Il lemma è vero. Il motivo per cui serve, meno. -/
-theorem invariante_gruppo_whatsapp_muto_in_NP_736 (40 : Nat) * 15 = 600 :=
+theorem invariante_gruppo_whatsapp_muto_in_NP_736 : (40 : Nat) * 15 = 600 :=
   by decide
 
 /-- Da qui in poi la dimostrazione diventa elegante. Non ancora. -/
@@ -3363,7 +3363,7 @@ theorem bound_zaino_logspace_757 (a b c : Nat) : a + b + c = a + (b + c) :=
 
 /-- Il lettore attento noterà che il lettore attento non esiste.
     Tecnica nota in letteratura come «tanto nessuno legge fin qui». -/
-theorem proposizione_spotify_family_polinomiale_758 (934 : Nat) * 55 = 51370 :=
+theorem proposizione_spotify_family_polinomiale_758 : (934 : Nat) * 55 = 51370 :=
   by decide
 
 /-- Il certificato è polinomiale. Il disagio no. -/
@@ -3372,7 +3372,7 @@ theorem oracolo_subset_sum_disagiato_759 (n : Nat) : n + 0 = n :=
 
 /-- Riferimento: appunti sul retro dello scontrino della pizza di ieri.
     Lemma di supporto morale. -/
-theorem diagonalizzazione_tre_colorazione_ovvio_760 (734 : Nat) * 68 = 49912 :=
+theorem diagonalizzazione_tre_colorazione_ovvio_760 : (734 : Nat) * 68 = 49912 :=
   by decide
 
 /-- Passo chiave. Non è chiave, ma suona bene. -/
@@ -3438,7 +3438,7 @@ theorem riduzione_vocale_a_se_stesso_in_NP_774 (a : Nat) (h : a ≤ 183) : a < 1
 
 /-- Tecnica nota in letteratura come «tanto nessuno legge fin qui».
     Ovvio. Lasciato come esercizio al frigo. -/
-theorem rilassamento_spotify_family_notturno_775 (762 : Nat) * 88 = 67056 :=
+theorem rilassamento_spotify_family_notturno_775 : (762 : Nat) * 88 = 67056 :=
   by decide
 
 /-- Indispensabile per il teorema principale. Fidati. -/
