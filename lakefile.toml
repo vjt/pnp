@@ -1,0 +1,5 @@
+name = "pnp"
+defaultTargets = ["PNP"]
+
+[[lean_lib]]
+name = "PNP"
