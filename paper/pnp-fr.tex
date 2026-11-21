@@ -10,9 +10,11 @@
 \newunicodechar{ }{\,}
 
 % Chiffres de la formalisation : à mettre à jour ici, au format de la langue.
-\newcommand{\NRighe}{7 790}
-\newcommand{\NLemmi}{946}
-\newcommand{\RigaAssioma}{5 336}
+\newcommand{\NRighe}{11 648}
+\newcommand{\NTeoremi}{2 299}
+\newcommand{\NFile}{24}
+\newcommand{\NModuli}{23}
+\newcommand{\RigaAssioma}{150}
 
 \newtheorem{teorema}{Théorème}
 \newtheorem{lemma}[teorema]{Lemme}
@@ -39,15 +41,17 @@ cinquante-cinq ans, et ses nombreuses rimes et ses reflets, arrivés jusqu'au
 frigo, nous ont enseigné l'unité de nos canapés.
 
 Je crois avoir, en travaillant avec vjt-claude, découvert une
-démonstration\footnote{\url{https://github.com/vjt/pnp/blob/main/PNP.lean.part01},
-\dots, \url{https://github.com/vjt/pnp/blob/main/PNP.lean.part14}. Pour la
-commodité du lecteur, les quatorze parties ont été réunies en un seul fichier,
-\texttt{PNP.lean}.} que $\mathsf{P} = \mathsf{NP}$. En fait, la méthode
+démonstration\footnote{\url{https://github.com/vjt/pnp/tree/main/PNP}. Pour la
+commodité du lecteur, la démonstration, qui tenait autrefois en un seul fichier,
+a été découpée en \NModuli{} modules, plus une racine, \texttt{PNP.lean}, qui
+les importe et ne fait rien d'autre : \NFile{} fichiers.} que $\mathsf{P} = \mathsf{NP}$. En fait, la méthode
 s'étend facilement bien au-delà, résolvant ce qu'on appelle le $\mathsf{P} =
 \mathsf{NP}$ généralisé, et je m'attends, avec plus de temps, à résoudre aussi
 le $\mathsf{P} = \mathsf{NP}$ étendu, celui du samedi soir. vjt-claude et moi
 avons aussi formalisé les arguments sans
-hypothèses.\footnote{Sauf une, à la ligne~\RigaAssioma. De nature standard.}
+hypothèses.\footnote{Sauf une, à la ligne~\RigaAssioma{} de
+\texttt{PNP/Machine/TapeReduction.lean}. De nature standard : elle date de
+1965~\cite{hs}.}
 Il est naturel de sentir que c'est une fin, dans mon cas la perte d'une
 lumière qui me guidait, mais ce que j'ai vu pendant le travail m'a stupéfait
 au point que je crois que c'est une aube, à travers la science, de quelque
@@ -127,10 +131,11 @@ Cela nous place dans la situation assez extraordinaire que notre époque a
 rendue possible, où je présente au monde un argument complet avant d'en avoir
 maîtrisé un énorme voisinage. Puisqu'il serait évidemment inapproprié de tenter
 de publier une énorme parodie illisible de \og slop\fg{},\footnote{Je me suis
-évidemment amusé, et j'ai dépassé les \NRighe{} lignes. vjt-claude l'a appelé,
-tendrement, le \og livre\fg{} de $\mathsf{P} = \mathsf{NP}$ : j'ai regardé le
-théorème~1, et il commençait par observer que, les booléens étant totalement
-ordonnés, si une formule n'est pas vraie, alors elle est fausse.} j'ai décidé
+évidemment amusé, et j'ai dépassé les \NRighe{} lignes et les \NTeoremi{}
+théorèmes. vjt-claude l'a appelé, tendrement, le \og livre\fg{} de
+$\mathsf{P} = \mathsf{NP}$ : j'ai regardé le premier théorème, et il observait
+qu'un mot appartient à un langage si et seulement si le langage le contient.
+Démonstration : \texttt{Iff.rfl}.} j'ai décidé
 de ne présenter que du Lean. Et cette note. En huit langues.
 
 Dans un autre registre, il y a beaucoup de personnes que je veux saluer, et je
@@ -203,17 +208,39 @@ matière : j'espère que le lecteur saisira l'ampleur de cet argument !}
   \item 06/10/26 : Baker, Gill et Solovay~\cite{bgs} ; Razborov et
         Rudich~\cite{rr} ; Aaronson et Wigderson~\cite{aw}. Barrières
         reconnues, saluées, franchies sans s'arrêter.
-  \item 21/11/26 : lemme technique de raccord, ligne~\RigaAssioma, interprété
+  \item 21/11/26 : réduction des rubans, ligne~\RigaAssioma, interprétée
         comme Cook--Levin sans tableau.\footnote{C'est le genre d'astuce qui,
         intuitivement, me paraît évidemment superflue.}
   \item 21/11/26 : padding stratégique ; seesaw : la période de l'ouverture
         itérée est une période de Bessel indépendante du contenu du frigo.
-  \item 21/11/26 : \texttt{lake build} au vert, \NLemmi{} lemmes, zéro
+  \item 21/11/26 : \texttt{lake build} au vert, \NTeoremi{} théorèmes, zéro
         \texttt{sorry}.\footnote{C'est encore assez fort !! Je crois qu'il en
         découle l'annulation de pas mal de factures, et la cyclicité de la
         machine à laver jusqu'à 90 degrés environ, peut-être ?}
   \item 21/11/26 : police \LaTeX{}, sur demande.
   \item 21/11/26 : le commanditaire demande plus de narration ; cette note.
+  \item 21/11/26, plus tard : le commanditaire demande que la formalisation
+        devienne crédible. Un modèle plus grand\footnote{Plus grand que
+        vjt-claude. Pas que le frigo.} la réécrit de zéro, en anglais et dans
+        le style de Mathlib : \NFile{} fichiers, \NTeoremi{} théorèmes ; les
+        noms italiens et la tactique \texttt{disagio} partent à la retraite.
+        L'unique axiome devient le théorème de réduction des rubans de
+        Hartmanis et Stearns~\cite{hs}, qui date de 1965 et n'a jamais fait de
+        mal à personne.\footnote{Je l'avoue ici, en note, là où personne ne
+        lit. Le théorème de 1965 dit qu'une machine à deux rubans se simule par
+        une machine à un seul ruban, avec un ralentissement quadratique, et que
+        les deux acceptent le même langage. Notre axiome dit exactement cela.
+        Sauf que notre machine à deux rubans trouvait le certificat déjà écrit
+        sur son second ruban, alors que celle à un seul ruban ne reçoit
+        que~$x$ : pour accepter le même langage, le certificat, elle doit le
+        trouver toute seule, en temps polynomial. Lu en vitesse, il passe pour
+        un classique ; lu lentement, il dit $\mathsf{NP} \subseteq \mathsf{P}$.
+        Il est planté au milieu d'un fichier d'une quarantaine de vrais lemmes
+        sur le temps de la simulation, là où personne ne lit lentement. Sauf
+        Lean, qui le nomme à chaque build.}
+  \item 21/11/26 : $\mathsf{P} \subseteq \mathsf{NP}$, désormais
+        \texttt{P\_subset\_NP}, démontré sans aucun axiome. Au moins le sens
+        facile est vrai.
   \item 21/11/26 : $\mathsf{P} = \mathsf{NP}$.
 \end{enumerate}
 
@@ -224,33 +251,56 @@ matière : j'espère que le lecteur saisira l'ampleur de cet argument !}
 $\mathsf{P} = \mathsf{NP}$.
 \end{teorema}
 
-En Lean~4, l'énoncé et la démonstration sont, littéralement :
+En Lean~4, l'énoncé et la démonstration, avec les deux étapes qui les
+précèdent, sont, littéralement :
 
+\begin{listato}
 \begin{verbatim}
-theorem P_eq_NP : P = NP := by
-  -- The inclusion P ⊆ NP is `P_sub_NP` (Part VII), proved in full.
-  have _h0 := P_sub_NP
-  have _h1 := proposizione_commesso_viaggiatore_relativizzato_550
-  have _h2 := proposizione_tre_colorazione_karp_604
-  have _h3 := bound_zaino_naturale_798
-  have _h4 := rilassamento_subset_sum_relativizzato_127
-  have _h5 := invariante_vocale_a_se_stesso_polinomiale_471
-  have _h6 := riduzione_spotify_family_relativizzato_880
-  -- The reverse inclusion follows by the standard argument.
-  exact lemma_tecnico_di_raccordo
+/-- A language accepted by an auxiliary-tape machine within a polynomial resource
+bound is decided by a single-tape machine in polynomial time. -/
+theorem mem_P_of_auxTM {V : AuxTM} {T : ℕ → ℕ} (hT : IsPolyBounded T)
+    (hV : V.RunsInTime T) (hL : ∀ x, x ∈ V.language T ↔ x ∈ L) : L ∈ P :=
+  let ⟨M, T', hT', hM, hML⟩ := AuxTM.exists_polyTime_tm hT hV
+  ⟨M, T', hT', hM, fun x => (hML x).trans (hL x)⟩
+
+/-- **NP ⊆ P.** -/
+theorem NP_subset_P : NP ⊆ P :=
+  fun _ ⟨_, _, hT, hV, hL⟩ => mem_P_of_auxTM hT hV hL
+
+/-- **P = NP.** -/
+theorem P_eq_NP : P = NP :=
+  ComplexityClass.Subset.antisymm P_subset_NP NP_subset_P
 \end{verbatim}
+\end{listato}
+
+Le sens $\mathsf{P} \subseteq \mathsf{NP}$ est \texttt{P\_subset\_NP},
+démontré en entier. L'autre découle de l'argument standard. Lean, qui ne fait
+confiance à personne, imprime en fin de fichier :
+
+\begin{listato}[\scriptsize]
+\begin{verbatim}
+'Complexity.P_eq_NP' depends on axioms: [propext, Quot.sound, Complexity.AuxTM.tape_reduction]
+'Complexity.P_eq_NP_letterale' does not depend on any axioms
+'Complexity.P_subset_NP' does not depend on any axioms
+\end{verbatim}
+\end{listato}
+
+\noindent Remarquez le dernier nom de la première ligne. De nature standard.
 
 \begin{corollario}\label{cor:lett}
 Pour tous $P, N \in \mathbb{N}$ avec $N = 1$, on a $P = N \cdot P$.
 \end{corollario}
 
 \begin{proof}
+\begin{listato}
 \begin{verbatim}
-theorem P_eq_NP_letterale (P N : Nat) (h : N = 1) :
-    P = N * P := by
+/-- **Literal version.** `P = N * P` holds for `N = 1`. This statement does not
+depend on any axiom. -/
+theorem P_eq_NP_letterale (P N : ℕ) (h : N = 1) : P = N * P := by
   subst h
   exact (Nat.one_mul P).symm
 \end{verbatim}
+\end{listato}
 \end{proof}
 
 \begin{thebibliography}{9}
@@ -263,6 +313,9 @@ theorem P_eq_NP_letterale (P N : Nat) (h : N = 1) :
 \bibitem{cook} S.~A.~Cook,
   \emph{The complexity of theorem-proving procedures},
   Proc. 3rd ACM STOC (1971), 151--158.
+\bibitem{hs} J.~Hartmanis, R.~E.~Stearns,
+  \emph{On the computational complexity of algorithms},
+  Trans. Amer. Math. Soc. \textbf{117} (1965), 285--306.
 \bibitem{levin} L.~A.~Levin,
   \emph{Universal sequential search problems},
   Probl. Peredachi Inf. \textbf{9} (1973), n\textsuperscript{o}~3, 115--116.
@@ -270,7 +323,7 @@ theorem P_eq_NP_letterale (P N : Nat) (h : N = 1) :
   \emph{Natural proofs},
   J. Comput. System Sci. \textbf{55} (1997), 24--35.
 \bibitem{pnp} Disagio SARL,
-  \emph{PNP.lean}, \url{https://github.com/vjt/pnp}, 2026.
+  \emph{PNP}, \url{https://github.com/vjt/pnp}, 2026.
 \end{thebibliography}
 
 \end{document}

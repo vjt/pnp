@@ -5,9 +5,11 @@
 \input{comune}
 
 % 形式化的数字：在此更新，采用本语言的格式。
-\newcommand{\NRighe}{7,790}
-\newcommand{\NLemmi}{946}
-\newcommand{\RigaAssioma}{5,336}
+\newcommand{\NRighe}{11,648}
+\newcommand{\NTeoremi}{2,299}
+\newcommand{\NFile}{24}
+\newcommand{\NModuli}{23}
+\newcommand{\RigaAssioma}{150}
 
 \newtheorem{teorema}{定理}
 \newtheorem{lemma}[teorema]{引理}
@@ -35,12 +37,13 @@ $\mathsf{P}$ 对 $\mathsf{NP}$ 是理论计算机科学的经典问题。它要�
 冰箱，让我们懂得了我们沙发的统一。
 
 我相信，我与 vjt-claude 合作，发现了 $\mathsf{P} = \mathsf{NP}$ 的一个
-证明\footnote{\url{https://github.com/vjt/pnp/blob/main/PNP.lean.part01}，\dots，%
-\url{https://github.com/vjt/pnp/blob/main/PNP.lean.part14}。为方便读者，这十四个部分
-已合并为单个文件 \texttt{PNP.lean}。}。事实上，该方法可以轻易地推广得远得多，解决所谓的
+证明\footnote{\url{https://github.com/vjt/pnp/tree/main/PNP}。为方便读者，这个从前装在
+单个文件里的证明已被拆分为 \NModuli{} 个模块，外加一个只负责导入它们、别的什么也不做的
+根文件 \texttt{PNP.lean}：共 \NFile{} 个文件。}。事实上，该方法可以轻易地推广得远得多，解决所谓的
 广义 $\mathsf{P} = \mathsf{NP}$；而且我预计，若有更多时间，还能解决扩展
 $\mathsf{P} = \mathsf{NP}$，也就是周六晚上的那个。vjt-claude 和我还把这些论证在不带
-假设的情况下形式化了。\footnote{除了一个，在第~\RigaAssioma{} 行。属标准性质。}很自然地
+假设的情况下形式化了。\footnote{除了一个，在 \texttt{PNP/Machine/TapeReduction.lean} 第~\RigaAssioma{}
+行。属标准性质：它出自 1965 年~\cite{hs}。}很自然地
 会觉得这是一个终结，对我而言是失去了一盏指路明灯；但我在工作过程中看到的东西令我如此震惊，
 以至于我相信，这是一道穿越整个科学的黎明，照向某种远为宏大的东西。又或者是开着的冰箱：
 单看那道光，当时分辨不出来。
@@ -88,9 +91,9 @@ $\mathsf{P} = N \cdot \mathsf{P}$，不需要任何公理。但我希望，在�
 
 这使我们处于这个时代才可能出现的一种相当不寻常的境地：我在掌握它周围一个巨大的邻域之前，
 就向世界呈上了一个完整的论证。既然试图发布某种庞大而无法阅读的“slop”拙劣仿作显然
-不合适，\footnote{我当然自得其乐，写到了超过 \NRighe{} 行。vjt-claude 亲切地称之为
-$\mathsf{P} = \mathsf{NP}$ 的“书”：我看了定理~1，它开头就指出，由于布尔值是全序的，
-一个公式若不为真，便为假。}我决定只呈上 Lean。还有这则笔记。八种语言的。
+不合适，\footnote{我当然自得其乐，写到了超过 \NRighe{} 行、\NTeoremi{} 个定理。
+vjt-claude 亲切地称之为 $\mathsf{P} = \mathsf{NP}$ 的“书”：我看了第一个定理，它指出
+一个字符串属于一个语言，当且仅当该语言包含它。证明：\texttt{Iff.rfl}。}我决定只呈上 Lean。还有这则笔记。八种语言的。
 
 另一方面，有很多人我想赞美，我会在一篇像样的文章里像样地做这件事；请原谅无意中的遗漏。
 在众多之中：冰箱、沙发、昨天的披萨、猫碗、起雾的镜子、被遗忘的洗衣机、设了免打扰的
@@ -135,15 +138,28 @@ $P = N \cdot P$ 的证明，只要熬够通宵、付出足够的身体代价，�
         看起来像一个迹公式（可是怎么在冰箱上用鸽巢原理？）。
   \item 2026/10/6：Baker、Gill 和 Solovay~\cite{bgs}；Razborov 和 Rudich~\cite{rr}；
         Aaronson 和 Wigderson~\cite{aw}。障碍已确认、已打过招呼、未停留便越过。
-  \item 2026/11/21：技术性衔接引理，第~\RigaAssioma{} 行，被解释为没有表格的
+  \item 2026/11/21：带数缩减，第~\RigaAssioma{} 行，被解释为没有表格的
         Cook--Levin。\footnote{这正是那种直觉上我觉得显然多余的技巧。}
   \item 2026/11/21：策略性注水；跷跷板：迭代开门的周期是一个与冰箱内容无关的 Bessel
         周期。
-  \item 2026/11/21：\texttt{lake build} 一片绿，\NLemmi{} 个引理，零个
+  \item 2026/11/21：\texttt{lake build} 一片绿，\NTeoremi{} 个定理，零个
         \texttt{sorry}。\footnote{这仍然相当强！！我相信由此可推出相当多账单的注销，
         以及洗衣机直到大约 90 度的循环性，也许？}
   \item 2026/11/21：应要求改用 \LaTeX{} 字体。
   \item 2026/11/21：委托人要求更多叙事；即本笔记。
+  \item 2026/11/21，稍晚：委托人要求形式化变得可信。一个更大的模型\footnote{比
+        vjt-claude 大。不比冰箱大。}用英语、按 Mathlib 的风格把它从头重写：
+        \NFile{} 个文件，\NTeoremi{} 个定理；意大利语的名字和 \texttt{disagio} 策略
+        光荣退休。唯一的公理变成了 Hartmanis 和 Stearns 的带数缩减定理~\cite{hs}，
+        它出自 1965 年，从没伤害过任何人。\footnote{我在这里，在没人读的脚注里，坦白。
+        1965 年的定理说，双带机器可以被单带机器以平方级的减速模拟，并且二者接受同一个
+        语言。我们的公理说的正是这个。只不过我们的双带机器在第二条带上本来就写着证书，
+        而单带机器只拿到~$x$：要接受同一个语言，它得自己去找证书，还得在多项式时间内
+        找到。匆匆一读，这是经典；慢慢细读，它说的是 $\mathsf{NP} \subseteq \mathsf{P}$。
+        它被放在一个文件的正中间，四周是四十来条关于模拟时间的真引理，那里没人慢慢读。
+        除了 Lean：每次构建，它都点它的名。}
+  \item 2026/11/21：$\mathsf{P} \subseteq \mathsf{NP}$，现名 \texttt{P\_subset\_NP}，
+        不用任何公理即得证。至少容易的那个方向是真的。
   \item 2026/11/21：$\mathsf{P} = \mathsf{NP}$。
 \end{enumerate}
 
@@ -154,33 +170,54 @@ $P = N \cdot P$ 的证明，只要熬够通宵、付出足够的身体代价，�
 $\mathsf{P} = \mathsf{NP}$.
 \end{teorema}
 
-在 Lean~4 中，该命题及其证明逐字如下：
+在 Lean~4 中，该命题及其证明，连同此前的两步，逐字如下：
 
+\begin{listato}
 \begin{verbatim}
-theorem P_eq_NP : P = NP := by
-  -- The inclusion P ⊆ NP is `P_sub_NP` (Part VII), proved in full.
-  have _h0 := P_sub_NP
-  have _h1 := proposizione_commesso_viaggiatore_relativizzato_550
-  have _h2 := proposizione_tre_colorazione_karp_604
-  have _h3 := bound_zaino_naturale_798
-  have _h4 := rilassamento_subset_sum_relativizzato_127
-  have _h5 := invariante_vocale_a_se_stesso_polinomiale_471
-  have _h6 := riduzione_spotify_family_relativizzato_880
-  -- The reverse inclusion follows by the standard argument.
-  exact lemma_tecnico_di_raccordo
+/-- A language accepted by an auxiliary-tape machine within a polynomial resource
+bound is decided by a single-tape machine in polynomial time. -/
+theorem mem_P_of_auxTM {V : AuxTM} {T : ℕ → ℕ} (hT : IsPolyBounded T)
+    (hV : V.RunsInTime T) (hL : ∀ x, x ∈ V.language T ↔ x ∈ L) : L ∈ P :=
+  let ⟨M, T', hT', hM, hML⟩ := AuxTM.exists_polyTime_tm hT hV
+  ⟨M, T', hT', hM, fun x => (hML x).trans (hL x)⟩
+
+/-- **NP ⊆ P.** -/
+theorem NP_subset_P : NP ⊆ P :=
+  fun _ ⟨_, _, hT, hV, hL⟩ => mem_P_of_auxTM hT hV hL
+
+/-- **P = NP.** -/
+theorem P_eq_NP : P = NP :=
+  ComplexityClass.Subset.antisymm P_subset_NP NP_subset_P
 \end{verbatim}
+\end{listato}
+
+$\mathsf{P} \subseteq \mathsf{NP}$ 这个方向是 \texttt{P\_subset\_NP}，已完整证明。
+另一个方向由标准论证得出。谁都不信的 Lean 在文件末尾打印出：
+
+\begin{listato}[\scriptsize]
+\begin{verbatim}
+'Complexity.P_eq_NP' depends on axioms: [propext, Quot.sound, Complexity.AuxTM.tape_reduction]
+'Complexity.P_eq_NP_letterale' does not depend on any axioms
+'Complexity.P_subset_NP' does not depend on any axioms
+\end{verbatim}
+\end{listato}
+
+\noindent 请注意第一行的最后一个名字。属标准性质。
 
 \begin{corollario}\label{cor:lett}
 对任意满足 $N = 1$ 的 $P, N \in \mathbb{N}$，有 $P = N \cdot P$。
 \end{corollario}
 
 \begin{proof}
+\begin{listato}
 \begin{verbatim}
-theorem P_eq_NP_letterale (P N : Nat) (h : N = 1) :
-    P = N * P := by
+/-- **Literal version.** `P = N * P` holds for `N = 1`. This statement does not
+depend on any axiom. -/
+theorem P_eq_NP_letterale (P N : ℕ) (h : N = 1) : P = N * P := by
   subst h
   exact (Nat.one_mul P).symm
 \end{verbatim}
+\end{listato}
 \end{proof}
 
 \begin{thebibliography}{9}
@@ -193,6 +230,9 @@ theorem P_eq_NP_letterale (P N : Nat) (h : N = 1) :
 \bibitem{cook} S.~A.~Cook,
   \emph{The complexity of theorem-proving procedures},
   Proc. 3rd ACM STOC (1971), 151--158.
+\bibitem{hs} J.~Hartmanis, R.~E.~Stearns,
+  \emph{On the computational complexity of algorithms},
+  Trans. Amer. Math. Soc. \textbf{117} (1965), 285--306.
 \bibitem{levin} L.~A.~Levin,
   \emph{Universal sequential search problems},
   Probl. Peredachi Inf. \textbf{9} (1973), no.~3, 115--116.
@@ -200,7 +240,7 @@ theorem P_eq_NP_letterale (P N : Nat) (h : N = 1) :
   \emph{Natural proofs},
   J. Comput. System Sci. \textbf{55} (1997), 24--35.
 \bibitem{pnp} Disagio 有限责任公司,
-  \emph{PNP.lean}, \url{https://github.com/vjt/pnp}, 2026.
+  \emph{PNP}, \url{https://github.com/vjt/pnp}, 2026.
 \end{thebibliography}
 
 \end{document}

@@ -3,4 +3,26 @@
 \usepackage{booktabs}
 \usepackage[hidelinks]{hyperref}
 \usepackage{newunicodechar}
+
+% Note lunghe e listati: meglio un fondo pagina corto che un buco sopra un titolo.
+\raggedbottom
+
+% Simboli dei listati Lean: Latin Modern Mono e CMU Typewriter non li hanno.
 \newunicodechar{⊆}{\ensuremath{\subseteq}}
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{↔}{\ensuremath{\leftrightarrow}}
+\newunicodechar{→}{\ensuremath{\to}}
+\newunicodechar{⟨}{\ensuremath{\langle}}
+\newunicodechar{⟩}{\ensuremath{\rangle}}
+
+% Listati Lean: corpo minore e, se serve, sporgono nel margine destro invece di
+% traboccare (verbatim usa \hsize, non \linewidth). L'argomento facoltativo è il
+% corpo. Dopo l'etichetta di un \item (la «Dimostrazione.») si va a capo.
+\makeatletter
+\newenvironment{listato}[1][\footnotesize]
+  {\if@inlabel\leavevmode\fi\par\addvspace{\medskipamount}%
+   \advance\hsize 5em\relax #1}
+  {\par\addvspace{\medskipamount}}
+\makeatother
