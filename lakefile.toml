@@ -1,5 +1,8 @@
 name = "pnp"
 defaultTargets = ["PNP"]
 
+# La radice PNP.lean importa e basta; la dimostrazione sta nei moduli di PNP/.
+# "PNP.*" = la radice e tutti i sottomoduli, anche quelli che nessuno importa.
 [[lean_lib]]
 name = "PNP"
+globs = ["PNP.*"]

@@ -3,6 +3,17 @@ on: [push, pull_request]
 jobs:
   kernel:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+      # La libreria PNP: la radice, che importa e basta, e i moduli di PNP/
+      # (globs = "PNP.*" in lakefile.toml, anche quelli che nessuno importa).
       - uses: leanprover/lean-action@v1
+        with:
+          build-args: "PNP"
+      # La risposta alla domanda frequente, ripetuta in fondo al log. Le stesse
+      # righe sono anche controllate da #guard_msgs: se cambiano, la build è già rossa.
+      - name: assiomi
+        run: |
+          export PATH="$HOME/.elan/bin:$PATH"
+          lake build PNP.Conclusione 2>&1 | grep "axioms"
