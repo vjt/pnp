@@ -5,12 +5,17 @@ Non si scrive a mano: si genera. Deterministico (seed fisso), così il diff
 resta vuoto finché non cambia questo file.
 
     python3 gen.py && lake build
+
+Struttura: dieci Parti. Ogni Parte apre con della impalcatura scritta a mano
+(strutture, classi, istanze, definizioni ricorsive, cicli) e prosegue con
+lemmi generati da una trentina di modelli, tutti veri, tutti dimostrati, quasi
+tutti inutili. Il resto lo fa il lemma tecnico di raccordo.
 """
 import pathlib
 import random
 
 OUT = pathlib.Path(__file__).resolve().parent / "PNP.lean"
-RIGHE = 3500          # "qualche migliaio", da specifica
+RIGHE = 7800          # "qualche migliaio", da specifica, rivista al rialzo
 SEED = 0x5EED_D15A    # seed disagiato
 
 PREFISSI = ["riduzione", "lemma", "corollario", "stima", "bound", "oracolo",
@@ -47,6 +52,60 @@ DOC = [
     "Il lettore attento noterà che il lettore attento non esiste.",
     "Dimostrazione costruttiva: costruisce soprattutto ansia.",
     "Indispensabile per il teorema principale. Fidati.",
+    # nuove leve
+    "Generalizzazione necessaria per un caso che non si presenta mai.",
+    "Il frigo è stato aperto 37 volte durante la stesura di questo lemma.",
+    "L'induzione è superflua. L'abbiamo fatta lo stesso, per rispetto.",
+    "Tre dimostrazioni dello stesso fatto, nessuna delle quali viene usata.",
+    "Andata e ritorno attraverso due codifiche, per vedere il panorama.",
+    "La lavatrice è finita da tre ore. Il lemma no.",
+    "Enunciato in forma più generale del necessario, per sembrare serio.",
+    "Si veda la Parte III, che a sua volta rimanda qui.",
+    "Il divano ha un grado polinomiale. Il proprietario anche.",
+    "Lemma di raccordo minore. Quello maggiore è altrove.",
+    "Questo lemma è stato riformulato quattro volte. Il significato è rimasto ignoto.",
+    "Caso degenere: le ipotesi si contraddicono, quindi vale tutto.",
+    "Calcolo fatto a mano sul tovagliolo della cena delle 23:40.",
+    "Stima volutamente lasca: stringerla avrebbe richiesto un'idea.",
+    "La pizza di ieri è un certificato valido, se scaldata.",
+    "Il kernel l'ha accettato. Noi un po' meno.",
+    "Corollario immediato di un lemma che dimostriamo più avanti, o forse prima.",
+    "Il caso induttivo è identico al caso base, ma più lungo.",
+    "Dimostrato per esaustione. Del revisore.",
+    "Il ciclo termina. Lo dice `termination_by`, e noi ci fidiamo.",
+]
+
+COMMENTI = [
+    "Crucially, we now observe that the claim follows.",
+    "This step is essential.",
+    "By the standard argument.",
+    "We proceed by a careful case analysis.",
+    "Note that this is non-trivial.",
+    "It is worth noting that the fridge plays no role here.",
+    "The key insight is that nothing happens.",
+    "We first establish an auxiliary fact, which we will not use.",
+    "This follows immediately (cf. Part III).",
+    "Here we exploit the polynomial bound in an essential way.",
+    "Without loss of generality, assume the couch is occupied.",
+    "The remaining cases are analogous.",
+    "A more elegant proof exists. This is not it.",
+    "TODO: simplify. (Will not be simplified.)",
+    "Let us now carefully unfold the definitions.",
+    "Importantly, the certificate fits in the fridge.",
+    "At this point the argument is essentially complete.",
+    "We emphasize that this is where the magic happens.",
+    "Sanity check (redundant, but reassuring).",
+    "Recall the definition from Part I. Or Part VIII.",
+    "The reader may verify this at leisure, preferably at night.",
+    "We now invoke the inductive hypothesis, for emotional support.",
+    "One checks directly that the bound is not tight. It does not need to be.",
+    "This is the heart of the argument. The argument has several hearts.",
+    "Strictly speaking this is overkill. We do it anyway.",
+    "Morally, this is Cook–Levin.",
+    "We record this for later use (it will not be used later).",
+    "The following is a routine computation.",
+    "Observe that the leftovers in the fridge are irrelevant.",
+    "As is well known, the washing machine finished hours ago.",
 ]
 
 PARTI = [
@@ -64,38 +123,1448 @@ PARTI = [
 
 ROMANI = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"]
 
+# ---------------------------------------------------------------------------
+# Impalcatura scritta a mano, una per Parte. Va in testa alla Parte.
+# ---------------------------------------------------------------------------
 
-def enunciato(r):
-    """Un enunciato vero, banale, e dimostrabile dal core di Lean 4."""
-    a, b = r.randint(2, 999), r.randint(2, 99)
-    t = r.randrange(14)
+IMPALCATURA = [
+    # Parte I: Preliminari
+    r'''
+section Preliminari
+
+/-- Un bit. Abbreviazione di `Bool`, per chiarezza. -/
+abbrev Bit : Type := Bool
+
+/-- Un bit, ma più formale. Ridefinito per non dipendere da `Bit`, da cui dipende. -/
+abbrev BitFormale : Type := Bit
+
+/-- Stringa di bit. Il materiale di cui sono fatti i problemi, e i divani. -/
+abbrev Stringa : Type := List BitFormale
+
+/-- Un problema di decisione: un linguaggio su stringhe di bit, come si deve. -/
+abbrev Problema : Type := Stringa → Prop
+
+/-- Una classe di complessità: un insieme di problemi. -/
+abbrev Classe : Type := Problema → Prop
+
+/-- Lunghezza di una stringa, incapsulata per motivi di astrazione. -/
+@[reducible] def lunghezza (x : Stringa) : Nat := x.length
+
+/-- Indice limitato: un `Fin`, ma con un nome più rassicurante. -/
+abbrev Indice (n : Nat) : Type := Fin (n + 1)
+
+/-- Naturale certificato positivo. Il certificato è nel frigo. -/
+abbrev Positivo : Type := { n : Nat // 0 < n }
+
+/-- L'unico positivo di cui siamo davvero sicuri. -/
+def Positivo.uno : Positivo := ⟨1, by decide⟩
+
+/-- Tutto ciò che ha una lunghezza. Il divano, per esempio. -/
+class HaLunghezza (α : Type u) where
+  /-- La lunghezza, misurata in cuscini. -/
+  lung : α → Nat
+
+instance : HaLunghezza Stringa := ⟨List.length⟩
+
+instance {α : Type u} [HaLunghezza α] : HaLunghezza (Option α) :=
+  ⟨fun o => match o with
+    | none => 0
+    | some a => HaLunghezza.lung a⟩
+
+/-- Un polinomio a coefficienti naturali, in forma di Horner.
+    Il grado è ridondante, esattamente come il lettore. -/
+structure PolyBound where
+  /-- Il grado dichiarato. -/
+  grado : Nat
+  /-- I coefficienti, dal termine noto in su. -/
+  coefficienti : List Nat
+  /-- Invariante di coerenza. Serve a far sembrare la struttura seria. -/
+  coerente : coefficienti.length = grado + 1
+
+namespace PolyBound
+
+/-- Schema di Horner, ricorsivo, perché i cicli si fanno dopo. -/
+def horner (n : Nat) : List Nat → Nat
+  | [] => 0
+  | a :: as => a + n * horner n as
+
+/-- Valutazione di un `PolyBound` in un punto. -/
+def valuta (p : PolyBound) (n : Nat) : Nat := horner n p.coefficienti
+
+/-- Il polinomio costante. Il grado zero del disagio. -/
+def costante (k : Nat) : PolyBound := ⟨0, [k], rfl⟩
+
+/-- Il polinomio identità, scritto per esteso. -/
+def identita : PolyBound := ⟨1, [0, 1], rfl⟩
+
+/-- Moltiplicazione per uno scalare. -/
+def scala (p : PolyBound) (k : Nat) : PolyBound :=
+  ⟨p.grado, p.coefficienti.map (k * ·), by simp [p.coerente]⟩
+
+/-- Monotonia di Horner. La dimostrazione è più lunga del necessario. -/
+theorem horner_mono {n m : Nat} (h : n ≤ m) : ∀ xs : List Nat, horner n xs ≤ horner m xs
+  | [] => Nat.le_refl 0
+  | a :: as => by
+      -- We proceed by structural recursion, as is customary.
+      have ih := horner_mono h as
+      have hm : n * horner n as ≤ m * horner m as := Nat.mul_le_mul h ih
+      simp only [horner]
+      omega
+
+/-- La valutazione è monotona. Il disagio pure. -/
+theorem valuta_mono (p : PolyBound) {n m : Nat} (h : n ≤ m) : p.valuta n ≤ p.valuta m :=
+  horner_mono h p.coefficienti
+
+/-- Horner commuta con la scala. -/
+theorem horner_scala (k n : Nat) : ∀ xs : List Nat, horner n (xs.map (k * ·)) = k * horner n xs
+  | [] => by simp [horner]
+  | a :: as => by
+      simp only [List.map, horner, horner_scala k n as, Nat.mul_add, Nat.mul_left_comm]
+
+/-- Valutare dopo aver scalato è come scalare dopo aver valutato. -/
+theorem valuta_scala (p : PolyBound) (k n : Nat) : (p.scala k).valuta n = k * p.valuta n :=
+  horner_scala k n p.coefficienti
+
+/-- Il polinomio costante è costante. Risultato atteso. -/
+theorem valuta_costante (k n : Nat) : (costante k).valuta n = k := by
+  simp [valuta, costante, horner]
+
+/-- L'identità è l'identità. Risultato meno atteso. -/
+theorem valuta_identita (n : Nat) : identita.valuta n = n := by
+  simp [valuta, identita, horner]
+
+end PolyBound
+
+/-- Le direzioni in cui può muoversi la testina. `divano` = resta dov'è. -/
+inductive Direzione where
+  | sinistra
+  | destra
+  | divano
+deriving DecidableEq, Repr
+
+/-- Un nastro bi-infinito, troncato per motivi di budget. -/
+structure Nastro where
+  /-- Ciò che sta a sinistra, al contrario. -/
+  sx : List Bit
+  /-- Il bit sotto la testina. -/
+  testa : Bit
+  /-- Ciò che sta a destra. -/
+  dx : List Bit
+deriving DecidableEq, Repr
+
+namespace Nastro
+
+/-- Il nastro vuoto. Come il frigo il lunedì. -/
+def vuoto : Nastro := ⟨[], false, []⟩
+
+/-- Carica l'input sul nastro. -/
+def carica : Stringa → Nastro
+  | [] => vuoto
+  | b :: bs => ⟨[], b, bs⟩
+
+/-- Scrive un bit sotto la testina. -/
+def scrivi (t : Nastro) (b : Bit) : Nastro := { t with testa := b }
+
+/-- Muove la testina. Sul divano non si muove. -/
+def muovi (t : Nastro) : Direzione → Nastro
+  | .divano => t
+  | .sinistra =>
+      match t with
+      | ⟨[], h, r⟩ => ⟨[], false, h :: r⟩
+      | ⟨l :: ls, h, r⟩ => ⟨ls, l, h :: r⟩
+  | .destra =>
+      match t with
+      | ⟨l, h, []⟩ => ⟨h :: l, false, []⟩
+      | ⟨l, h, r :: rs⟩ => ⟨h :: l, r, rs⟩
+
+/-- Dimensione del nastro, in celle. -/
+def dimensione (t : Nastro) : Nat := t.sx.length + 1 + t.dx.length
+
+/-- Il contenuto del nastro, letto da sinistra a destra. -/
+def contenuto (t : Nastro) : Stringa := t.sx.reverse ++ t.testa :: t.dx
+
+theorem dimensione_pos (t : Nastro) : 0 < t.dimensione := by
+  -- Crucially, every tape has at least one cell: the one under the head.
+  unfold dimensione
+  omega
+
+theorem dimensione_scrivi (t : Nastro) (b : Bit) : (t.scrivi b).dimensione = t.dimensione := rfl
+
+/-- Muoversi non accorcia il nastro. Si può solo peggiorare. -/
+theorem dimensione_muovi (t : Nastro) (d : Direzione) : t.dimensione ≤ (t.muovi d).dimensione := by
+  -- We proceed by a careful case analysis (twelve cases, all identical).
+  cases t with
+  | mk l h r =>
+    cases d <;> cases l <;> cases r <;> simp [muovi, dimensione] <;> omega
+
+theorem muovi_divano (t : Nastro) : t.muovi .divano = t := rfl
+
+end Nastro
+
+instance : HaLunghezza Nastro := ⟨Nastro.dimensione⟩
+
+/-- Macchina di Turing a due nastri: quello di lavoro e il frigo.
+    Il frigo contiene il certificato. La macchina può aprirlo, una cella alla volta. -/
+structure MacchinaDiTuring where
+  /-- Numero di stati, meno uno, per comodità di nessuno. -/
+  stati : Nat
+  /-- Stato iniziale. -/
+  iniziale : Indice stati
+  /-- Stato accettante. Ce n'è uno solo: siamo gente semplice. -/
+  accetta : Indice stati
+  /-- Transizione: (stato, bit sul nastro, bit nel frigo) ↦
+      (nuovo stato, bit da scrivere, direzione, apro il frigo?). -/
+  delta : Indice stati → Bit → Bit → Indice stati × Bit × Direzione × Bool
+
+/-- Configurazione istantanea. Il campo `orologio` conta i passi, e le ore. -/
+structure Configurazione (M : MacchinaDiTuring) where
+  stato : Indice M.stati
+  nastro : Nastro
+  frigo : List Bit
+  orologio : Nat
+
+/-- Cosa c'è in cima al frigo. Se il frigo è vuoto: `false`, come la speranza. -/
+def testaDelFrigo : List Bit → Bit
+  | [] => false
+  | b :: _ => b
+
+/-- Un passo di calcolo. -/
+def passo (M : MacchinaDiTuring) (c : Configurazione M) : Configurazione M :=
+  let r := M.delta c.stato c.nastro.testa (testaDelFrigo c.frigo)
+  { stato := r.1
+    nastro := (c.nastro.scrivi r.2.1).muovi r.2.2.1
+    frigo := if r.2.2.2 then c.frigo.tail else c.frigo
+    orologio := c.orologio + 1 }
+
+/-- Simulatore a carburante. Quando finisce il carburante, finisce la serata. -/
+def esegui (M : MacchinaDiTuring) : Nat → Configurazione M → Configurazione M
+  | 0, c => c
+  | n + 1, c => esegui M n (passo M c)
+
+/-- Configurazione iniziale: input sul nastro, certificato in frigo. -/
+def configurazioneIniziale (M : MacchinaDiTuring) (x cert : Stringa) : Configurazione M :=
+  { stato := M.iniziale, nastro := Nastro.carica x, frigo := cert, orologio := 0 }
+
+/-- `M` accetta `x` col certificato `cert` entro il tempo `p(|x|)`. -/
+def accettaEntro (M : MacchinaDiTuring) (p : PolyBound) (x cert : Stringa) : Prop :=
+  (esegui M (p.valuta x.length) (configurazioneIniziale M x cert)).stato = M.accetta
+
+instance (M : MacchinaDiTuring) (p : PolyBound) (x cert : Stringa) :
+    Decidable (accettaEntro M p x cert) := by
+  unfold accettaEntro; infer_instance
+
+/-- Eseguire `a + b` passi è come eseguirne `a` e poi `b`. Semigruppo del disagio. -/
+theorem esegui_somma (M : MacchinaDiTuring) :
+    ∀ (a b : Nat) (c : Configurazione M), esegui M (a + b) c = esegui M b (esegui M a c)
+  | 0, b, c => by simp [esegui]
+  | a + 1, b, c => by
+      -- The inductive step is essentially routine.
+      rw [Nat.add_right_comm, esegui, esegui, esegui_somma M a b (passo M c)]
+
+/-- L'orologio avanza di un'unità per passo. Le ore piccole si sommano. -/
+theorem esegui_orologio (M : MacchinaDiTuring) :
+    ∀ (n : Nat) (c : Configurazione M), (esegui M n c).orologio = c.orologio + n
+  | 0, c => rfl
+  | n + 1, c => by
+      rw [esegui, esegui_orologio M n (passo M c)]
+      simp [passo]
+      omega
+
+/-- Un decisore: una macchina e un polinomio che ne limita il tempo. -/
+structure Decisore where
+  macchina : MacchinaDiTuring
+  tempo : PolyBound
+
+/-- `D` decide `L`: accetta esattamente le stringhe di `L`, a frigo vuoto. -/
+def Decisore.decide (D : Decisore) (L : Problema) : Prop :=
+  ∀ x : Stringa, L x ↔ accettaEntro D.macchina D.tempo x []
+
+/-- Un verificatore: macchina, tempo, e capienza del frigo. -/
+structure Verificatore where
+  macchina : MacchinaDiTuring
+  tempo : PolyBound
+  spazioFrigo : PolyBound
+
+/-- Un certificato per `x`: una stringa che entra nel frigo. -/
+structure Certificato (V : Verificatore) (x : Stringa) where
+  contenuto : Stringa
+  entra_nel_frigo : contenuto.length ≤ V.spazioFrigo.valuta x.length
+
+/-- `V` accetta `x` col certificato `c`. -/
+def Verificatore.accetta (V : Verificatore) (x : Stringa) (c : Certificato V x) : Prop :=
+  accettaEntro V.macchina V.tempo x c.contenuto
+
+/-- `V` verifica `L`. -/
+def Verificatore.verifica (V : Verificatore) (L : Problema) : Prop :=
+  ∀ x : Stringa, L x ↔ ∃ c : Certificato V x, V.accetta x c
+
+/-- La classe P: problemi decisi in tempo polinomiale, a frigo chiuso. -/
+def P : Classe := fun L => ∃ D : Decisore, D.decide L
+
+/-- La classe NP: problemi verificati in tempo polinomiale, a frigo aperto. -/
+def NP : Classe := fun L => ∃ V : Verificatore, V.verifica L
+
+end Preliminari
+''',
+    # Parte II: Riduzioni dal divano
+    r'''
+section Divano
+
+/-- Imbottitura: si aggiungono cuscini (bit `false`) in fondo alla stringa. -/
+def pad (k : Nat) (x : Stringa) : Stringa := x ++ List.replicate k false
+
+/-- La lunghezza di una stringa imbottita. Lemma centrale di tutta la teoria. -/
+theorem pad_lunghezza (k : Nat) (x : Stringa) : (pad k x).length = x.length + k := by
+  simp [pad]
+
+/-- Lunghezza, ma misurata dal divano. -/
+def lunghezzaDelDivano (x : Stringa) : Nat := lunghezza x
+
+/-- Lunghezza, ma misurata dal divano, in modo formale. -/
+abbrev lunghezzaFormale : Stringa → Nat := lunghezzaDelDivano
+
+/-- Riduzione di Karp, eseguita senza alzarsi dal divano. -/
+structure RiduzioneDalDivano (A B : Problema) where
+  /-- La funzione di riduzione. -/
+  f : Stringa → Stringa
+  /-- Il tempo che ci mette. Dichiarato, mai verificato. -/
+  tempo : PolyBound
+  /-- Correttezza. -/
+  corretta : ∀ x, A x ↔ B (f x)
+
+/-- `A` si riduce a `B`, se esiste una riduzione dal divano. -/
+def Riducibile (A B : Problema) : Prop := Nonempty (RiduzioneDalDivano A B)
+
+@[inherit_doc] infix:50 " ≤ₚ " => Riducibile
+
+/-- La riduzione identica: non alzarsi affatto. -/
+def RiduzioneDalDivano.refl (A : Problema) : RiduzioneDalDivano A A :=
+  ⟨id, PolyBound.identita, fun _ => Iff.rfl⟩
+
+/-- Composizione di riduzioni: alzarsi due volte, ma restando seduti. -/
+def RiduzioneDalDivano.comp {A B C : Problema} (r : RiduzioneDalDivano A B)
+    (s : RiduzioneDalDivano B C) : RiduzioneDalDivano A C :=
+  ⟨s.f ∘ r.f, s.tempo, fun x => (r.corretta x).trans (s.corretta (r.f x))⟩
+
+theorem riducibile_refl (A : Problema) : A ≤ₚ A := ⟨RiduzioneDalDivano.refl A⟩
+
+theorem riducibile_trans {A B C : Problema} (h₁ : A ≤ₚ B) (h₂ : B ≤ₚ C) : A ≤ₚ C :=
+  match h₁, h₂ with
+  | ⟨r⟩, ⟨s⟩ => ⟨r.comp s⟩
+
+/-- Il problema della parità dei cuscini, con `k` cuscini già sul divano. -/
+def Parita (k : Nat) : Problema := fun x => (x.length + k) % 2 = 0
+
+/-- Conta i cuscini occupati. Ciclo `for`, perché la ricorsione è da boomer. -/
+def contaCuscini (x : Stringa) : Nat := Id.run do
+  let mut n := 0
+  for b in x do
+    if b then n := n + 1
+  return n
+
+/-- La macchina del divano: si siede nello stato accettante e non si alza più. -/
+def macchinaDelDivano : MacchinaDiTuring :=
+  ⟨1, 0, 1, fun s b _ => (if s = 0 then 1 else s, b, .divano, false)⟩
+
+/-- Il problema banale sta in P. Prima dimostrazione onesta del file. -/
+theorem tutto_in_P : P (fun _ => True) :=
+  ⟨⟨macchinaDelDivano, PolyBound.costante 1⟩, fun x =>
+    ⟨fun _ => by unfold accettaEntro; rw [PolyBound.valuta_costante]; rfl, fun _ => trivial⟩⟩
+
+end Divano
+''',
+    # Parte III: Il frigo come oracolo
+    r'''
+section Frigo
+
+/-- Un oracolo, nel senso di Baker–Gill–Solovay e del frigo alle 3 di notte. -/
+class Oracolo (ω : Type u) where
+  /-- Si interroga l'oracolo. Risponde. -/
+  interroga : ω → Stringa → Bool
+  /-- Il costo di un'interrogazione, in bollette. -/
+  costo : ω → Nat := fun _ => 1
+
+/-- Il frigo. -/
+structure Frigo where
+  /-- Lo sportello. -/
+  aperto : Bool
+  /-- La temperatura, in gradi di disagio. -/
+  temperatura : Nat
+  /-- Gli avanzi, uno per ripiano. -/
+  ripiani : List Stringa
+  /-- C'è la pizza di ieri? -/
+  pizzaDiIeri : Bool
+deriving Repr
+
+/-- Il frigo come oracolo: se è aperto e c'è la pizza, la risposta è sì. -/
+instance : Oracolo Frigo where
+  interroga f x := f.aperto && (decide (x.length ≤ f.temperatura) || f.pizzaDiIeri)
+  costo f := f.temperatura + 1
+
+instance : Inhabited Frigo := ⟨⟨true, 4, [], true⟩⟩
+
+/-- Si lascia il frigo aperto finché non scende a 4 gradi. Ricorsione ben fondata. -/
+def raffredda (f : Frigo) : Frigo :=
+  if h : f.temperatura ≤ 4 then f
+  else raffredda { f with temperatura := f.temperatura - 1 }
+termination_by f.temperatura
+decreasing_by simp_wf; omega
+
+/-- Il frigo converge. Teorema di punto fisso dell'elettrodomestico. -/
+theorem raffredda_converge (f : Frigo) : (raffredda f).temperatura ≤ 4 := by
+  -- We proceed by functional induction on the fridge.
+  induction f using raffredda.induct with
+  | case1 f h => rw [raffredda]; simp [h]
+  | case2 f h ih => rw [raffredda]; simp [h]; exact ih
+
+/-- Un grado in meno. -/
+def raffreddaUnGrado (f : Frigo) : Frigo := { f with temperatura := f.temperatura - 1 }
+
+/-- Iterazione del frigo, a carburante. -/
+def iteraFrigo : Nat → Frigo → Frigo
+  | 0, f => f
+  | n + 1, f => iteraFrigo n (raffreddaUnGrado f)
+
+theorem iteraFrigo_temperatura :
+    ∀ (n : Nat) (f : Frigo), (iteraFrigo n f).temperatura = f.temperatura - n
+  | 0, f => rfl
+  | n + 1, f => by
+      rw [iteraFrigo, iteraFrigo_temperatura n]
+      simp [raffreddaUnGrado]
+      omega
+
+/-- Si aspetta davanti al frigo aperto finché non converge. Ciclo `while`:
+    termina in pratica, in teoria non lo sappiamo e il kernel nemmeno. -/
+def aspettaIlFrigo (f : Frigo) : Frigo := Id.run do
+  let mut g := f
+  while g.temperatura > 4 do
+    g := raffreddaUnGrado g
+  return g
+
+/-- La macchina del frigo: accetta se in cima al frigo c'è un `true`. -/
+def macchinaDelFrigo : MacchinaDiTuring :=
+  ⟨1, 0, 1, fun s b fb => (if s = 0 then (if fb then 1 else 0) else s, b, .divano, false)⟩
+
+/-- Il problema banale sta in NP, col certificato `[true]` in frigo. -/
+theorem tutto_in_NP : NP (fun _ => True) := by
+  refine ⟨⟨macchinaDelFrigo, PolyBound.costante 1, PolyBound.costante 1⟩, fun x => ?_⟩
+  -- Importantly, the certificate fits in the fridge.
+  have hc : [true].length ≤ (PolyBound.costante 1).valuta x.length := by
+    rw [PolyBound.valuta_costante]; decide
+  refine ⟨fun _ => ⟨⟨[true], hc⟩, ?_⟩, fun _ => trivial⟩
+  unfold Verificatore.accetta accettaEntro
+  simp only [PolyBound.valuta_costante]
+  rfl
+
+/-- Una scatola, polimorfa nell'universo. Per la pizza. -/
+structure Scatola (α : Type u) where
+  contenuto : α
+  etichetta : String
+
+end Frigo
+''',
+    # Parte IV: Cook–Levin, ma di notte
+    r'''
+section Notte
+
+/-- Un letterale. Di notte le polarità si confondono. -/
+structure Letterale where
+  var : Nat
+  positivo : Bool
+deriving DecidableEq, Repr
+
+abbrev Clausola : Type := List Letterale
+abbrev FormulaCNF : Type := List Clausola
+abbrev Assegnamento : Type := Nat → Bool
+
+def Letterale.valuta (σ : Assegnamento) (l : Letterale) : Bool :=
+  if l.positivo then σ l.var else !σ l.var
+
+def Clausola.valuta (σ : Assegnamento) (c : Clausola) : Bool := c.any (Letterale.valuta σ)
+
+def FormulaCNF.valuta (σ : Assegnamento) (φ : FormulaCNF) : Bool := φ.all (Clausola.valuta σ)
+
+/-- Un assegnamento letto da una stringa. Oltre la fine: `false`. -/
+def assegnamentoDaStringa (x : Stringa) : Assegnamento := fun i => x.getD i false
+
+/-- La formula notturna di una stringa: una clausola unitaria per bit. -/
+def formulaDaIndice : Nat → Stringa → FormulaCNF
+  | _, [] => []
+  | i, b :: bs => [⟨i, b⟩] :: formulaDaIndice (i + 1) bs
+
+def formulaDiNotte (x : Stringa) : FormulaCNF := formulaDaIndice 0 x
+
+theorem formulaDaIndice_length :
+    ∀ (i : Nat) (x : Stringa), (formulaDaIndice i x).length = x.length
+  | _, [] => rfl
+  | i, b :: bs => by simp [formulaDaIndice, formulaDaIndice_length (i + 1) bs]
+
+/-- SAT, nella versione notturna. -/
+def SAT : Problema := fun x => ∃ σ : Assegnamento, (formulaDiNotte x).valuta σ = true
+
+theorem valuta_nil (σ : Assegnamento) : FormulaCNF.valuta σ [] = true := rfl
+
+theorem valuta_append (σ : Assegnamento) (φ ψ : FormulaCNF) :
+    (φ ++ ψ).valuta σ = (φ.valuta σ && ψ.valuta σ) := by
+  simp [FormulaCNF.valuta, List.all_append]
+
+/-- Il tableau di Cook–Levin, riga per riga, con un ciclo `for`. -/
+def tableauNotturno (M : MacchinaDiTuring) (x : Stringa) (righe : Nat) : List Stringa := Id.run do
+  let mut out : List Stringa := []
+  let mut c := configurazioneIniziale M x []
+  for _ in [0:righe] do
+    out := out ++ [c.nastro.contenuto]
+    c := passo M c
+  return out
+
+/-- Simulatore notturno: ciclo `for` con uscita anticipata, se si accetta prima. -/
+def eseguiDiNotte (M : MacchinaDiTuring) (c : Configurazione M) (carburante : Nat) :
+    Configurazione M := Id.run do
+  let mut c := c
+  for _ in [0:carburante] do
+    if c.stato = M.accetta then break
+    c := passo M c
+  return c
+
+/-- Si cena alle 23:40. Se è prima, si aspetta. Ciclo `while`, termina (empiricamente). -/
+def cenaAlle2340 (minuti : Nat) : Nat := Id.run do
+  let mut m := minuti
+  while m % 60 ≠ 40 do
+    m := m + 1
+  return m
+
+/-- Disagio totale di una lista di stringhe: due fold annidati. -/
+def disagioTotale (xss : List Stringa) : Nat :=
+  xss.foldl (fun acc xs => acc + xs.foldr (fun b a => if b then a + 2 else a + 1) 0) 0
+
+theorem disagio_interno_ge_lunghezza : ∀ xs : Stringa,
+    xs.length ≤ xs.foldr (fun b a => if b then a + 2 else a + 1) 0
+  | [] => Nat.le_refl 0
+  | b :: bs => by
+      have ih := disagio_interno_ge_lunghezza bs
+      cases b <;> simp only [List.foldr, List.length_cons] <;> simp <;> omega
+
+end Notte
+''',
+    # Parte V: Padding strategico
+    r'''
+section Imbottitura
+
+/-- Imbottitura polinomiale: tanti cuscini quanti ne prescrive `p`. -/
+def padPolinomiale (p : PolyBound) (x : Stringa) : Stringa := pad (p.valuta x.length) x
+
+theorem padPolinomiale_lunghezza (p : PolyBound) (x : Stringa) :
+    (padPolinomiale p x).length = x.length + p.valuta x.length :=
+  pad_lunghezza _ _
+
+/-- Codifica unaria. Inefficiente, quindi onesta. -/
+def codificaUnaria (n : Nat) : Stringa := List.replicate n true
+
+def decodificaUnaria (x : Stringa) : Nat := x.length
+
+theorem round_trip_unario (n : Nat) : decodificaUnaria (codificaUnaria n) = n := by
+  simp [decodificaUnaria, codificaUnaria]
+
+/-- Codifica binaria a carburante. Il carburante è sempre abbastanza. Quasi. -/
+def codificaBinariaCon : Nat → Nat → Stringa
+  | 0, _ => []
+  | f + 1, n => if n = 0 then [] else (n % 2 == 1) :: codificaBinariaCon f (n / 2)
+
+def codificaBinaria (n : Nat) : Stringa := codificaBinariaCon (n + 1) n
+
+def decodificaBinaria : Stringa → Nat
+  | [] => 0
+  | b :: bs => (if b then 1 else 0) + 2 * decodificaBinaria bs
+
+/-- La lavatrice dimenticata: gira la stringa `giri` volte. -/
+def lavatriceDimenticata (giri : Nat) (x : Stringa) : Stringa := Id.run do
+  let mut s := x
+  for _ in [0:giri] do
+    s := s.reverse
+  return s
+
+end Imbottitura
+''',
+    # Parte VI: Barriere superate
+    r'''
+section Barriere
+
+/-- Una barriera: un vincolo sulle dimostrazioni. La nostra è un file. -/
+structure Barriera where
+  nome : String
+  anno : Nat
+  vincola : Prop → Prop
+
+def relativizzazione : Barriera := ⟨"Baker–Gill–Solovay", 1975, fun _ => True⟩
+def proveNaturali : Barriera := ⟨"Razborov–Rudich", 1997, fun _ => True⟩
+def algebrizzazione : Barriera := ⟨"Aaronson–Wigderson", 2009, fun _ => True⟩
+
+/-- Una barriera è superata se, ammesso il vincolo, vale la tesi o qualcos'altro. -/
+def Barriera.superata (b : Barriera) (φ : Prop) : Prop := b.vincola φ → φ ∨ True
+
+theorem barriera_superata (b : Barriera) (φ : Prop) : b.superata φ := fun _ => Or.inr trivial
+
+/-- P relativizzata a un oracolo qualunque, polimorfo nell'universo. -/
+def PConOracolo {ω : Type u} [Oracolo ω] (o : ω) : Classe :=
+  fun L => P L ∨ ∀ x, L x ↔ Oracolo.interroga o x = true
+
+theorem P_sub_PConOracolo {ω : Type u} [Oracolo ω] (o : ω) (L : Problema) (h : P L) :
+    PConOracolo o L := Or.inl h
+
+end Barriere
+''',
+    # Parte VII: Lemmi di raccordo
+    r'''
+section Raccordo
+
+/-- Chiude il frigo: la macchina ignora il certificato e non apre mai lo sportello. -/
+def MacchinaDiTuring.chiudiFrigo (M : MacchinaDiTuring) : MacchinaDiTuring :=
+  { M with delta := fun s b _ =>
+      let r := M.delta s b false
+      (r.1, r.2.1, r.2.2.1, false) }
+
+/-- Un passo a frigo chiuso è indistinguibile da un passo a frigo vuoto. -/
+theorem passo_frigo_chiuso (M : MacchinaDiTuring) (c₁ : Configurazione M.chiudiFrigo)
+    (c₂ : Configurazione M) (hs : c₁.stato = c₂.stato) (hn : c₁.nastro = c₂.nastro)
+    (hf : c₂.frigo = []) :
+    (passo M.chiudiFrigo c₁).stato = (passo M c₂).stato ∧
+    (passo M.chiudiFrigo c₁).nastro = (passo M c₂).nastro ∧
+    (passo M c₂).frigo = [] := by
+  refine ⟨?_, ?_, ?_⟩
+  · simp only [passo, MacchinaDiTuring.chiudiFrigo, hs, hn, hf, testaDelFrigo]
+  · simp only [passo, MacchinaDiTuring.chiudiFrigo, hs, hn, hf, testaDelFrigo]
+  · simp [passo, hf]
+
+/-- Per induzione sul carburante. -/
+theorem esegui_frigo_chiuso (M : MacchinaDiTuring) :
+    ∀ (n : Nat) (c₁ : Configurazione M.chiudiFrigo) (c₂ : Configurazione M),
+      c₁.stato = c₂.stato → c₁.nastro = c₂.nastro → c₂.frigo = [] →
+      (esegui M.chiudiFrigo n c₁).stato = (esegui M n c₂).stato
+  | 0, c₁, c₂, hs, _, _ => hs
+  | n + 1, c₁, c₂, hs, hn, hf => by
+      obtain ⟨hs', hn', hf'⟩ := passo_frigo_chiuso M c₁ c₂ hs hn hf
+      exact esegui_frigo_chiuso M n _ _ hs' hn' hf'
+
+theorem accetta_frigo_chiuso (M : MacchinaDiTuring) (p : PolyBound) (x c : Stringa) :
+    accettaEntro M.chiudiFrigo p x c ↔ accettaEntro M p x [] := by
+  unfold accettaEntro
+  rw [esegui_frigo_chiuso M _ _ (configurazioneIniziale M x []) rfl rfl rfl]
+  rfl
+
+/-- Ogni decisore è un verificatore che non guarda in frigo. -/
+def Decisore.comeVerificatore (D : Decisore) : Verificatore :=
+  ⟨D.macchina.chiudiFrigo, D.tempo, PolyBound.costante 0⟩
+
+/-- Il certificato vuoto. Entra in qualunque frigo. -/
+def certificatoVuoto (V : Verificatore) (x : Stringa) : Certificato V x :=
+  ⟨[], Nat.zero_le _⟩
+
+/-- P ⊆ NP. Questo è vero davvero, ed è dimostrato davvero. -/
+theorem P_sub_NP : ∀ L : Problema, P L → NP L := by
+  intro L ⟨D, hD⟩
+  refine ⟨D.comeVerificatore, fun x => ?_⟩
+  rw [hD x]
+  constructor
+  · intro h
+    exact ⟨certificatoVuoto _ x, (accetta_frigo_chiuso D.macchina D.tempo x []).mpr h⟩
+  · intro ⟨c, hc⟩
+    exact (accetta_frigo_chiuso D.macchina D.tempo x c.contenuto).mp hc
+
+/-- Il raccordo: una direzione dell'uguaglianza, ristretta a un problema. -/
+def raccordo (L : Problema) : Prop := P L → NP L
+
+theorem raccordo_ovunque : ∀ L : Problema, raccordo L := P_sub_NP
+
+end Raccordo
+''',
+    # Parte VIII: Ancora preliminari
+    r'''
+section AncoraPreliminari
+
+/-- Un bit di notte. Uguale a un bit di giorno, ma con meno luce. -/
+abbrev BitDiNotte : Type := BitFormale
+
+/-- Una stringa notturna. -/
+abbrev StringaDiNotte : Type := List BitDiNotte
+
+/-- Stringhe di lunghezza fissata, come sottotipo. -/
+abbrev StringaLunga (n : Nat) : Type := { x : StringaDiNotte // x.length = n }
+
+/-- Un indice del divano: un `Fin`, impacchettato in un sottotipo, per sicurezza. -/
+abbrev IndiceDelDivano (n : Nat) : Type := { i : Indice n // i.val ≤ n }
+
+/-- Tutto ciò che può essere misurato in disagio. -/
+class Disagiabile (α : Type u) where
+  disagio : α → Nat
+
+instance : Disagiabile Nat := ⟨id⟩
+
+instance : Disagiabile Bool := ⟨fun b => if b then 1 else 0⟩
+
+instance {α : Type u} [Disagiabile α] : Disagiabile (List α) :=
+  ⟨fun xs => xs.foldl (fun acc a => acc + Disagiabile.disagio a) 0⟩
+
+instance : Disagiabile Frigo := ⟨fun f => f.temperatura + f.ripiani.length⟩
+
+instance {α : Type u} {β : Type v} [Disagiabile α] [Disagiabile β] : Disagiabile (α × β) :=
+  ⟨fun p => Disagiabile.disagio p.1 + Disagiabile.disagio p.2⟩
+
+end AncoraPreliminari
+''',
+    # Parte IX: Stime asintotiche
+    r'''
+section Asintotica
+
+/-- O grande. Definita a mano, perché Mathlib non c'è e la dignità neppure. -/
+def GrandeO (f g : Nat → Nat) : Prop := ∃ c n₀ : Nat, ∀ n, n₀ ≤ n → f n ≤ c * g n
+
+theorem grandeO_refl (f : Nat → Nat) : GrandeO f f :=
+  ⟨1, 0, fun n _ => by omega⟩
+
+theorem grandeO_trans {f g h : Nat → Nat} (hf : GrandeO f g) (hg : GrandeO g h) :
+    GrandeO f h := by
+  obtain ⟨c₁, n₁, h₁⟩ := hf
+  obtain ⟨c₂, n₂, h₂⟩ := hg
+  refine ⟨c₁ * c₂, max n₁ n₂, fun n hn => ?_⟩
+  have a := h₁ n (Nat.le_trans (Nat.le_max_left _ _) hn)
+  have b := h₂ n (Nat.le_trans (Nat.le_max_right _ _) hn)
+  -- Here we exploit the polynomial bound in an essential way.
+  calc f n ≤ c₁ * g n := a
+    _ ≤ c₁ * (c₂ * h n) := Nat.mul_le_mul_left c₁ b
+    _ = c₁ * c₂ * h n := (Nat.mul_assoc _ _ _).symm
+
+/-- Ogni polinomio costante è O(1). Tutto è O(1) se aspetti abbastanza. -/
+theorem costante_grandeO_uno (k : Nat) : GrandeO (PolyBound.costante k).valuta (fun _ => 1) :=
+  ⟨k, 0, fun n _ => by
+    show (PolyBound.costante k).valuta n ≤ k * 1
+    rw [PolyBound.valuta_costante]
+    omega⟩
+
+end Asintotica
+''',
+    # Parte X: Verso la conclusione
+    r'''
+section Conclusione
+
+/-- Quasi P = NP: metà della tesi, per ogni problema. -/
+theorem quasi_P_eq_NP (L : Problema) : P L → NP L := P_sub_NP L
+
+/-- Quasi P = NP, ma detto con più convinzione. -/
+theorem quasi_P_eq_NP' (L : Problema) (h : P L) : NP L := by
+  exact by exact quasi_P_eq_NP L h
+
+end Conclusione
+''',
+]
+
+# ---------------------------------------------------------------------------
+# Utilità
+# ---------------------------------------------------------------------------
+
+
+def lb(bs):
+    """Lista di bit in sintassi Lean."""
+    return "[" + ", ".join("true" if b else "false" for b in bs) + "]"
+
+
+def bits(r, lo=1, hi=6):
+    return [r.random() < 0.5 for _ in range(r.randint(lo, hi))]
+
+
+def lbool(b):
+    return "true" if b else "false"
+
+
+def frigo(r):
+    """Un frigo concreto: (sintassi Lean, aperto, temperatura, pizza)."""
+    aperto, t, pizza = r.random() < 0.7, r.randint(0, 40), r.random() < 0.5
+    return f"(⟨{lbool(aperto)}, {t}, [], {lbool(pizza)}⟩ : Frigo)", aperto, t, pizza
+
+
+class Ctx:
+    """Stato condiviso fra i modelli: nomi già generati, per citarli dopo."""
+
+    def __init__(self):
+        self.calc = []     # (nome, a, b, c)
+        self.aux = []      # (nome, a, b)
+        self.giri = []     # (nome, a, b)
+        self.parita = []   # (nome, A, B)
+
+
+# ---------------------------------------------------------------------------
+# Modelli di lemma. Ognuno restituisce una lista di righe. "@C" diventa un
+# commento a caso, con l'indentazione della riga.
+# Ogni modello ha: parte minima in cui è disponibile, parti "di casa".
+# ---------------------------------------------------------------------------
+
+
+def m_calc(r, n, ctx):
+    a, b, c = r.randint(2, 99), r.randint(2, 40), r.randint(1, 500)
+    ctx.calc.append((n, a, b, c))
+    return [
+        f"theorem {n} (n : Nat) (h : n ≤ {a}) : n * {b} + {c} ≤ {a * b + c} := by",
+        "  @C",
+        f"  have hmul : n * {b} ≤ {a} * {b} := Nat.mul_le_mul_right {b} h",
+        f"  calc n * {b} + {c}",
+        f"      ≤ {a} * {b} + {c} := by omega",
+        f"    _ = {a * b + c} := by decide",
+    ]
+
+
+def m_calc_cor(r, n, ctx):
+    if not ctx.calc:
+        return m_calc(r, n, ctx)
+    prev, a, b, c = r.choice(ctx.calc)
+    k = r.randint(0, a)
+    return [
+        f"theorem {n} : {k} * {b} + {c} ≤ {a * b + c} := by",
+        "  @C",
+        f"  exact {prev} {k} (by decide)",
+    ]
+
+
+def m_aux(r, n, ctx):
+    a, b = r.randint(0, 99), r.randint(1, 30)
+    ctx.aux.append((n, a, b))
+    return [
+        f"/-- Funzione ausiliaria per `{n}`. Usata una volta, generalizzata per sicurezza. -/",
+        f"def {n}_aux : Nat → Nat",
+        f"  | 0 => {a}",
+        f"  | k + 1 => {n}_aux k + {b}",
+        "",
+        f"theorem {n} (k : Nat) : {n}_aux k = {a} + {b} * k := by",
+        "  @C",
+        "  induction k with",
+        f"  | zero => simp [{n}_aux]",
+        "  | succ k ih =>",
+        "    @C",
+        f"    simp only [{n}_aux, ih]",
+        "    omega",
+    ]
+
+
+def m_aux_cor(r, n, ctx):
+    if not ctx.aux:
+        return m_aux(r, n, ctx)
+    prev, a, b = r.choice(ctx.aux)
+    k = r.randint(0, 60)
+    return [
+        f"theorem {n} : {prev}_aux {k} = {a + b * k} :=",
+        f"  ({prev} {k}).trans (by decide)",
+    ]
+
+
+def m_ciclo(r, n, ctx):
+    a, b, k = r.randint(0, 50), r.randint(1, 20), r.randint(0, 25)
+    return [
+        f"/-- Versione iterativa, con un ciclo `for`, di una somma che si poteva scrivere. -/",
+        f"def {n}_ciclo (giri : Nat) : Nat := Id.run do",
+        f"  let mut acc := {a}",
+        "  for _ in [0:giri] do",
+        f"    acc := acc + {b}",
+        "  return acc",
+        "",
+        f"theorem {n} : {n}_ciclo {k} = {a} + {b} * {k} := by",
+        "  @C",
+        "  decide",
+    ]
+
+
+def m_giri(r, n, ctx):
+    b = r.randint(1, 9)
+    a = r.randint(b, b + 20)
+    ctx.giri.append((n, a, b))
+    return [
+        f"/-- Si fanno giri attorno al divano finché non si scende sotto {a}. -/",
+        f"def {n}_giri (m : Nat) : Nat :=",
+        f"  if h : m < {a} then m else {n}_giri (m - {b})",
+        "termination_by m",
+        "decreasing_by simp_wf; omega",
+        "",
+        f"theorem {n} (m : Nat) : {n}_giri m < {a} := by",
+        "  @C",
+        f"  induction m using {n}_giri.induct with",
+        f"  | case1 m h => rw [{n}_giri]; simp [h]",
+        f"  | case2 m h ih => rw [{n}_giri]; simp [h]; exact ih",
+    ]
+
+
+def m_giri_cor(r, n, ctx):
+    if not ctx.giri:
+        return m_giri(r, n, ctx)
+    prev, a, b = r.choice(ctx.giri)
+    k = r.randint(0, 5000)
+    return [
+        f"theorem {n} : {prev}_giri {k} < {a} + {r.randint(0, 9)} := by",
+        "  @C",
+        f"  have h := {prev} {k}",
+        "  omega",
+    ]
+
+
+def m_binario(r, n, ctx):
+    v = r.randint(0, 99999)
+    if r.random() < 0.5:
+        return [f"theorem {n} : decodificaBinaria (codificaBinaria {v}) = {v} := by", "  @C", "  decide"]
+    return [
+        f"theorem {n} :",
+        f"    decodificaUnaria (codificaUnaria (decodificaBinaria (codificaBinaria {v}))) = {v} := by",
+        "  -- Crucially, we round-trip through both encodings.",
+        "  rw [round_trip_unario]",
+        "  decide",
+    ]
+
+
+def m_divano(r, n, ctx):
+    k = r.randint(1, 12)
+    x = bits(r)
+    if r.random() < 0.5:
+        return [
+            f"theorem {n} :",
+            f"    accettaEntro macchinaDelDivano (PolyBound.costante {k}) {lb(x)} [] := by",
+            "  @C",
+            "  decide",
+        ]
+    return [
+        f"theorem {n} :",
+        f"    (esegui macchinaDelDivano {k} (configurazioneIniziale macchinaDelDivano {lb(x)} [])).orologio",
+        f"      = {k} :=",
+        "  (esegui_orologio _ _ _).trans (by decide)",
+    ]
+
+
+def m_frigo_tm(r, n, ctx):
+    k = r.randint(1, 9)
+    x, c = bits(r), bits(r, 0, 4)
+    if r.random() < 0.5:
+        return [
+            f"theorem {n} :",
+            f"    accettaEntro macchinaDelFrigo (PolyBound.costante {k}) {lb(x)} {lb([True] + c)} := by",
+            "  -- Importantly, the certificate fits in the fridge.",
+            "  decide",
+        ]
+    return [
+        f"theorem {n} :",
+        f"    ¬ accettaEntro macchinaDelFrigo (PolyBound.costante {k}) {lb(x)} {lb([False] + c)} := by",
+        "  -- Observe that the leftovers in the fridge are irrelevant.",
+        "  decide",
+    ]
+
+
+def m_raffredda(r, n, ctx):
+    f, *_ = frigo(r)
+    return [
+        f"theorem {n} : (raffredda {f}).temperatura ≤ 4 := by",
+        "  -- The fridge converges. This step is essential.",
+        f"  have h₁ := raffredda_converge {f}",
+        "  have h₂ : (4 : Nat) ≤ 4 := Nat.le_refl 4",
+        "  exact Nat.le_trans h₁ h₂",
+    ]
+
+
+def m_itera(r, n, ctx):
+    f, aperto, t, pizza = frigo(r)
+    if r.random() < 0.4:
+        f2 = f"(⟨{lbool(aperto)}, {t}, [], {lbool(pizza)}⟩ : Frigo)"
+        return [
+            f"theorem {n} : (iteraFrigo {t} {f2}).temperatura = 0 :=",
+            "  (iteraFrigo_temperatura _ _).trans (Nat.sub_self _)",
+        ]
+    k = r.randint(0, 50)
+    return [
+        f"theorem {n} : (iteraFrigo {k} {f}).temperatura = {max(t - k, 0)} := by",
+        "  @C",
+        "  simp [iteraFrigo_temperatura]",
+    ]
+
+
+def m_oracolo(r, n, ctx):
+    f, aperto, t, pizza = frigo(r)
+    x = bits(r, 0, 8)
+    ris = aperto and (len(x) <= t or pizza)
+    return [
+        f"theorem {n} : Oracolo.interroga {f} {lb(x)} = {lbool(ris)} := by",
+        "  @C",
+        "  decide",
+    ]
+
+
+def m_tre(r, n, ctx):
+    a = r.randint(1, 999)
+    return [
+        f"theorem {n} (a b : Nat) : a + b + {a} = {a} + b + a := by",
+        "  -- First proof.",
+        f"  have h₁ : a + b + {a} = {a} + b + a := by omega",
+        "  -- Second proof, by associativity and commutativity.",
+        f"  have h₂ : a + b + {a} = {a} + b + a := by ac_rfl",
+        "  -- Third proof, by the standard argument.",
+        f"  have h₃ : {a} + b + a = a + b + {a} := h₁.symm",
+        "  -- We now conclude without using any of the above.",
+        f"  exact (by omega : a + b + {a} = {a} + b + a)",
+    ]
+
+
+def m_cases(r, n, ctx):
+    a, b = r.randint(1, 500), r.randint(1, 99)
+    return [
+        f"theorem {n} (b : Bit) (m : Nat) (h : m < {a}) :",
+        f"    (if b then m + {b} else m) < {a + b} := by",
+        "  @C",
+        "  cases b <;> simp_all <;> omega",
+    ]
+
+
+def m_parita(r, n, ctx):
+    A, B = r.randint(0, 30), r.randint(0, 30)
+    m = r.randint(1, 8)
+    if (m + B - A) % 2:
+        m += 1
+    ctx.parita.append((n, A, B))
+    return [
+        f"theorem {n} : Parita {A} ≤ₚ Parita {B} :=",
+        f"  ⟨⟨pad {m}, PolyBound.identita, fun x => by simp [Parita, pad] <;> omega⟩⟩",
+    ]
+
+
+def m_parita_trans(r, n, ctx):
+    if not ctx.parita:
+        return m_parita(r, n, ctx)
+    prev, A, B = r.choice(ctx.parita)
+    C = r.randint(0, 30)
+    m = r.randint(1, 8)
+    if (m + C - B) % 2:
+        m += 1
+    ctx.parita.append((n, A, C))
+    return [
+        f"theorem {n} : Parita {A} ≤ₚ Parita {C} := by",
+        "  @C",
+        f"  refine riducibile_trans {prev} ?_",
+        f"  exact ⟨⟨pad {m}, PolyBound.identita, fun x => by simp [Parita, pad] <;> omega⟩⟩",
+    ]
+
+
+def m_P_NP(r, n, ctx):
+    t = r.randrange(4)
     if t == 0:
-        return "(n : Nat) : n + 0 = n", "by simp"
+        return [f"theorem {n} (L : Problema) (h : P L) : NP L ∨ P L := by",
+                "  @C", "  exact by exact Or.inl (P_sub_NP L h)"]
     if t == 1:
-        return "(a b : Nat) : a + b = b + a", "Nat.add_comm a b"
+        return [f"theorem {n} (L : Problema) (h : P L) : NP L ∧ P L :=",
+                "  ⟨P_sub_NP L h, h⟩"]
     if t == 2:
-        return f": ({a} : Nat) * {b} = {a * b}", "by decide"
-    if t == 3:
-        return "(a b : Nat) (h : a < b) : a + 1 ≤ b", "by omega"
-    if t == 4:
-        return "(p q : Prop) (hp : p) (hq : q) : p ∧ q", "⟨hp, hq⟩"
-    if t == 5:
-        return "(p : Prop) (hp : p) : p ∨ False", "Or.inl hp"
-    if t == 6:
-        return "(xs : List Bool) : xs ++ [] = xs", "by simp"
-    if t == 7:
-        return f"(k : Nat) (h : k = {a}) : k * 1 = {a}", "by omega"
-    if t == 8:
-        return "(L : Problema) (h : P L) : P L", "h"
-    if t == 9:
-        return "(L : Problema) (h : NP L) : NP L ∨ P L", "Or.inl h"
-    if t == 10:
-        return "(a b c : Nat) : a + b + c = a + (b + c)", "Nat.add_assoc a b c"
-    if t == 11:
-        return f"(a : Nat) (h : a ≤ {a}) : a < {a + 1}", "by omega"
-    if t == 12:
-        return "(b : Bool) : (b && true) = b", "by cases b <;> rfl"
-    return "(b : Bool) : (!(!b)) = b", "by cases b <;> rfl"
+        return [f"theorem {n} : ∀ L : Problema, raccordo L := by",
+                "  @C", "  intro L h", "  exact raccordo_ovunque L h"]
+    return [f"theorem {n} (L : Problema) (h : P L) : NP L :=",
+            "  show NP L from (raccordo_ovunque L) (by exact h)"]
+
+
+def m_fin(r, n, ctx):
+    a = r.randint(1, 99)
+    t = r.randrange(3)
+    if t == 0:
+        return [
+            f"theorem {n} (i : Indice {a}) : (Fin.castSucc i).val < {a} + 2 := by",
+            "  @C",
+            "  have h := i.isLt",
+            f"  show i.val < {a} + 2",
+            "  omega",
+        ]
+    if t == 1:
+        b = r.randint(1, 99)
+        return [
+            f"theorem {n} (p : Positivo) : 0 < p.val * {a} + {b} := by",
+            "  @C",
+            "  have := p.property",
+            "  omega",
+        ]
+    b = r.randint(1, 30)
+    return [
+        f"theorem {n} (x : {{ s : Stringa // s.length = {a} }}) :",
+        f"    (x.val ++ List.replicate {b} false).length = {a + b} := by",
+        "  @C",
+        "  have h₂ := x.property",
+        "  simp [h₂]",
+    ]
+
+
+def m_univ(r, n, ctx):
+    a, b = r.randint(0, 99), r.randint(0, 99)
+    return [
+        f"theorem {n} {{α : Type u}} {{β : Type v}} (f : α → β) (xs : List α)",
+        f"    (h : xs.length = {a}) : (xs.map f).length + {b} = {a + b} := by",
+        "  @C",
+        "  simp [h]",
+    ]
+
+
+def m_fold(r, n, ctx):
+    a = r.randint(1, 50)
+    return [
+        f"theorem {n} (xs : List Nat) :",
+        f"    (xs.map (· + {a})).foldr (· + ·) 0 = xs.foldr (· + ·) 0 + {a} * xs.length := by",
+        "  induction xs with",
+        "  | nil => simp",
+        "  | cons y ys ih =>",
+        "    @C",
+        "    simp only [List.map_cons, List.foldr_cons, List.length_cons, ih]",
+        "    omega",
+    ]
+
+
+def m_nastro(r, n, ctx):
+    a = r.randint(0, 9)
+    return [
+        f"theorem {n} (t : Nastro) (d : Direzione) (b : Bit) :",
+        f"    t.dimensione ≤ ((t.scrivi b).muovi d).dimensione + {a} := by",
+        "  @C",
+        "  have h := Nastro.dimensione_muovi (t.scrivi b) d",
+        "  rw [Nastro.dimensione_scrivi] at h",
+        "  omega",
+    ]
+
+
+def m_orologio(r, n, ctx):
+    a, b = r.randint(0, 40), r.randint(0, 40)
+    return [
+        f"theorem {n} (M : MacchinaDiTuring) (c : Configurazione M) :",
+        f"    (esegui M {a} (esegui M {b} c)).orologio = c.orologio + {a + b} := by",
+        "  @C",
+        f"  calc (esegui M {a} (esegui M {b} c)).orologio",
+        f"      = (esegui M ({b} + {a}) c).orologio := by rw [esegui_somma]",
+        f"    _ = c.orologio + ({b} + {a}) := esegui_orologio M _ c",
+        f"    _ = c.orologio + {a + b} := by omega",
+    ]
+
+
+def m_grandeO(r, n, ctx):
+    a, b = r.randint(1, 99), r.randint(0, 99)
+    return [
+        f"theorem {n} : GrandeO (fun m => {a} * m + {b}) (fun m => m + 1) :=",
+        f"  ⟨{a + b}, 0, fun m _ => by",
+        "    @C",
+        f"    show {a} * m + {b} ≤ {a + b} * (m + 1)",
+        "    omega⟩",
+    ]
+
+
+def m_grandeO_trans(r, n, ctx):
+    a, b, c = r.randint(1, 30), r.randint(0, 30), r.randint(1, 9)
+    return [
+        f"theorem {n} : GrandeO (fun m => {a} * m + {b}) (fun m => {c} * m + {c}) := by",
+        "  @C",
+        f"  have h₁ : GrandeO (fun m => {a} * m + {b}) (fun m => m + 1) :=",
+        f"    ⟨{a + b}, 0, fun m _ => by show {a} * m + {b} ≤ {a + b} * (m + 1); omega⟩",
+        f"  have h₂ : GrandeO (fun m => m + 1) (fun m => {c} * m + {c}) :=",
+        f"    ⟨1, 0, fun m _ => by show m + 1 ≤ 1 * ({c} * m + {c}); omega⟩",
+        "  exact grandeO_trans h₁ h₂",
+    ]
+
+
+def m_disagiabile(r, n, ctx):
+    t = r.randrange(3)
+    if t == 0:
+        x = bits(r, 0, 10)
+        return [f"theorem {n} : Disagiabile.disagio ({lb(x)} : List Bit) = {sum(x)} := by",
+                "  @C", "  decide"]
+    if t == 1:
+        f, aperto, tt, pizza = frigo(r)
+        a = r.randint(0, 99)
+        return [f"theorem {n} : Disagiabile.disagio {f} + {a} = {tt + a} := rfl"]
+    x = bits(r, 0, 6)
+    k = r.randint(0, 50)
+    return [f"theorem {n} : Disagiabile.disagio (({k} : Nat), ({lb(x)} : List Bit)) = {k + sum(x)} := by",
+            "  @C", "  decide"]
+
+
+def m_cnf(r, n, ctx):
+    x = bits(r, 1, 6)
+    phi = []
+    for _ in range(r.randint(1, 3)):
+        phi.append([(r.randint(0, 7), r.random() < 0.5) for _ in range(r.randint(1, 3))])
+
+    def sig(i):
+        return x[i] if i < len(x) else False
+    val = all(any((sig(v) if p else not sig(v)) for v, p in cl) for cl in phi)
+    phil = "[" + ", ".join("[" + ", ".join(f"⟨{v}, {lbool(p)}⟩" for v, p in cl) + "]"
+                           for cl in phi) + "]"
+    return [
+        f"theorem {n} :",
+        f"    FormulaCNF.valuta (assegnamentoDaStringa {lb(x)}) {phil} = {lbool(val)} := by",
+        "  -- Morally, this is Cook–Levin.",
+        "  decide",
+    ]
+
+
+def m_sat(r, n, ctx):
+    x = bits(r, 1, 7)
+    return [
+        f"theorem {n} : SAT {lb(x)} := by",
+        "  @C",
+        f"  exact ⟨assegnamentoDaStringa {lb(x)}, by decide⟩",
+    ]
+
+
+def m_tableau(r, n, ctx):
+    x, k = bits(r, 1, 4), r.randint(0, 6)
+    return [
+        f"theorem {n} : (tableauNotturno macchinaDelDivano {lb(x)} {k}).length = {k} := by",
+        "  @C",
+        "  decide",
+    ]
+
+
+def m_disagio_tot(r, n, ctx):
+    xss = [bits(r, 0, 4) for _ in range(r.randint(0, 3))]
+    tot = sum(2 if b else 1 for xs in xss for b in xs)
+    return [
+        f"theorem {n} : disagioTotale [{', '.join(lb(xs) for xs in xss)}] = {tot} := by",
+        "  @C",
+        "  decide",
+    ]
+
+
+def m_cuscini(r, n, ctx):
+    x = bits(r, 0, 10)
+    if r.random() < 0.5:
+        return [f"theorem {n} : contaCuscini {lb(x)} = {sum(x)} := by", "  @C", "  rfl"]
+    k = r.randint(0, 7)
+    y = x if k % 2 == 0 else list(reversed(x))
+    return [f"theorem {n} : lavatriceDimenticata {k} {lb(x)} = {lb(y)} := by",
+            "  -- As is well known, the washing machine finished hours ago.", "  decide"]
+
+
+def m_degenere(r, n, ctx):
+    a = r.randint(1, 500)
+    b = r.randint(1, 500)
+    if r.random() < 0.5:
+        return [
+            f"theorem {n} (m : Nat) (h₁ : m < {a}) (h₂ : {a + b} < m) : P = NP := by",
+            "  -- Caso degenere. We proceed by contradiction, with conviction.",
+            "  omega",
+        ]
+    return [
+        f"theorem {n} (h : ({a} : Nat) = {a + b}) : NP = P := by",
+        "  @C",
+        "  exact absurd h (by decide)",
+    ]
+
+
+def m_wrap(r, n, ctx):
+    a = r.randint(0, 99)
+    if r.random() < 0.5:
+        return [
+            f"theorem {n} (x : Stringa) : lunghezzaFormale (pad {a} x) = lunghezzaFormale x + {a} :=",
+            f"  pad_lunghezza {a} x",
+        ]
+    return [
+        f"theorem {n} (x : Stringa) : (pad {a} x ++ []).length = x.length + {a} :=",
+        f"  show (pad {a} x ++ []).length = x.length + {a} from by",
+        "    @C",
+        "    rw [List.append_nil]",
+        f"    exact pad_lunghezza {a} x",
+    ]
+
+
+def m_pad2(r, n, ctx):
+    a, b = r.randint(0, 50), r.randint(0, 50)
+    return [
+        f"theorem {n} (x : Stringa) : (pad {a} (pad {b} x)).length = x.length + {a + b} := by",
+        "  @C",
+        f"  have h₁ := pad_lunghezza {a} (pad {b} x)",
+        f"  have h₂ := pad_lunghezza {b} x",
+        "  omega",
+    ]
+
+
+def m_padpoly(r, n, ctx):
+    k = r.randint(0, 99)
+    return [
+        f"theorem {n} (x : Stringa) :",
+        f"    (padPolinomiale (PolyBound.costante {k}) x).length = x.length + {k} := by",
+        "  @C",
+        "  rw [padPolinomiale_lunghezza, PolyBound.valuta_costante]",
+    ]
+
+
+def m_poly(r, n, ctx):
+    t = r.randrange(3)
+    a, k = r.randint(0, 999), r.randint(1, 20)
+    if t == 0:
+        return [f"theorem {n} : (PolyBound.costante {a}).valuta {k} = {a} :=",
+                f"  PolyBound.valuta_costante {a} {k}"]
+    if t == 1:
+        return [f"theorem {n} (p : PolyBound) (m : Nat) (h : m ≤ {a}) : p.valuta m ≤ p.valuta {a} := by",
+                "  @C", "  exact PolyBound.valuta_mono p h"]
+    return [f"theorem {n} (m : Nat) : ((PolyBound.identita).scala {k}).valuta m = {k} * m := by",
+            "  @C",
+            "  rw [PolyBound.valuta_scala, PolyBound.valuta_identita]"]
+
+
+def m_ricorsione(r, n, ctx):
+    a, b = r.randint(1, 50), r.randint(0, 50)
+    return [
+        f"theorem {n} : (m : Nat) → {a} * m ≤ {a} * (m + {b})",
+        "  | 0 => by omega",
+        "  | m + 1 => by",
+        "    -- Induction is not needed here, but it is reassuring.",
+        f"    have _ih := {n} m",
+        "    omega",
+    ]
+
+
+def m_relativizza(r, n, ctx):
+    f, *_ = frigo(r)
+    if r.random() < 0.5:
+        return [f"theorem {n} (L : Problema) (h : P L) : PConOracolo {f} L := by",
+                "  @C", "  exact P_sub_PConOracolo _ L h"]
+    b = r.choice(["relativizzazione", "proveNaturali", "algebrizzazione"])
+    return [f"theorem {n} : {b}.superata (P = NP) := by",
+            "  @C", f"  exact barriera_superata {b} _"]
+
+
+def m_bool(r, n, ctx):
+    t = r.randrange(3)
+    if t == 0:
+        return [f"theorem {n} (b : Bit) : (b && true || false) = b := by", "  @C", "  cases b <;> rfl"]
+    if t == 1:
+        return [f"theorem {n} (b : BitDiNotte) : (!(!b)) = b := by", "  cases b <;> decide"]
+    return [f"theorem {n} (b c : Bit) : (b && c) = (c && b) := by",
+            "  @C", "  cases b <;> cases c <;> rfl"]
+
+
+def m_scatola(r, n, ctx):
+    a = r.randint(0, 999)
+    return [
+        f"theorem {n} {{α : Type u}} (x : α) :",
+        f"    (Scatola.mk x \"pizza di ieri ({a})\").contenuto = x := rfl",
+    ]
+
+
+def m_frigo_upd(r, n, ctx):
+    a = r.randint(0, 99)
+    return [
+        f"theorem {n} (f : Frigo) :",
+        f"    (raffreddaUnGrado (raffreddaUnGrado f)).temperatura + {a} = f.temperatura - 2 + {a} := by",
+        "  @C",
+        "  simp [raffreddaUnGrado] <;> omega",
+    ]
+
+
+def m_formula_len(r, n, ctx):
+    x = bits(r, 0, 9)
+    return [
+        f"theorem {n} : (formulaDiNotte {lb(x)}).length = {len(x)} := by",
+        "  @C",
+        f"  have h := formulaDaIndice_length 0 {lb(x)}",
+        "  exact h",
+    ]
+
+
+def m_stringa_lunga(r, n, ctx):
+    a, b = r.randint(0, 40), r.randint(0, 40)
+    return [
+        f"theorem {n} (x : StringaLunga {a}) (y : StringaLunga {b}) :",
+        f"    (x.val ++ y.val).length = {a + b} := by",
+        "  @C",
+        "  have hx := x.property",
+        "  have hy := y.property",
+        "  simp [hx, hy]",
+    ]
+
+
+def m_doppio(r, n, ctx):
+    a, b = r.randint(0, 4), r.randint(0, 4)
+    return [
+        "/-- Due cicli annidati per contare fino a un prodotto. -/",
+        f"def {n}_doppio (a b : Nat) : Nat := Id.run do",
+        "  let mut acc := 0",
+        "  for _ in [0:a] do",
+        "    for _ in [0:b] do",
+        "      acc := acc + 1",
+        "  return acc",
+        "",
+        f"theorem {n} : {n}_doppio {a} {b} = {a} * {b} := by",
+        "  @C",
+        "  decide",
+    ]
+
+
+def m_oracolo_itera(r, n, ctx):
+    f, aperto, t, pizza = frigo(r)
+    k = r.randint(0, 40)
+    x = bits(r, 0, 8)
+    ris = aperto and (len(x) <= max(t - k, 0) or pizza)
+    return [
+        f"theorem {n} :",
+        f"    Oracolo.interroga (iteraFrigo {k} {f}) {lb(x)} = {lbool(ris)} := by",
+        "  -- We let the fridge converge, then we ask it.",
+        "  decide",
+    ]
+
+
+def m_aspetta(r, n, ctx):
+    f, *_ = frigo(r)
+    return [
+        f"theorem {n} : ∃ g : Frigo, aspettaIlFrigo {f} = g := by",
+        "  -- The loop terminates: we exhibit its output, without computing it.",
+        "  exact ⟨_, rfl⟩",
+    ]
+
+
+def m_notte(r, n, ctx):
+    x, k = bits(r, 0, 5), r.randint(1, 30)
+    return [
+        f"theorem {n} :",
+        f"    (eseguiDiNotte macchinaDelDivano (configurazioneIniziale _ {lb(x)} []) {k}).stato",
+        "      = macchinaDelDivano.accetta := by",
+        "  @C",
+        "  decide",
+    ]
+
+
+# (modello, parte minima, parti di casa)
+MODELLI = [
+    (m_calc, 0, {0, 8}), (m_calc_cor, 0, {8, 9}), (m_aux, 0, {0, 4, 7}),
+    (m_aux_cor, 0, {7, 9}), (m_ciclo, 0, {3, 4}), (m_giri, 0, {2}),
+    (m_giri_cor, 0, {6, 9}), (m_tre, 0, {0, 6, 9}), (m_cases, 0, {0, 7}),
+    (m_fin, 0, {0, 7}), (m_univ, 0, {0, 7}), (m_fold, 0, {4, 8}),
+    (m_nastro, 0, {0, 3}), (m_orologio, 0, {3, 8}), (m_ricorsione, 0, {8, 9}),
+    (m_bool, 7, {7}), (m_poly, 0, {0, 8}),
+    (m_divano, 1, {1}), (m_parita, 1, {1}), (m_parita_trans, 1, {1, 6}),
+    (m_cuscini, 4, {1, 4}), (m_wrap, 1, {1, 4}), (m_pad2, 1, {4}),
+    (m_degenere, 0, {5, 6, 9}),
+    (m_doppio, 0, {3, 4}), (m_oracolo_itera, 2, {2, 5}), (m_aspetta, 2, {2}),
+    (m_notte, 3, {3}),
+    (m_frigo_tm, 2, {2}), (m_raffredda, 2, {2}), (m_itera, 2, {2}),
+    (m_oracolo, 2, {2, 5}), (m_scatola, 2, {2}), (m_frigo_upd, 2, {2}),
+    (m_cnf, 3, {3}), (m_sat, 3, {3}), (m_tableau, 3, {3}),
+    (m_disagio_tot, 3, {3}), (m_formula_len, 3, {3}),
+    (m_binario, 4, {4}), (m_padpoly, 4, {4}),
+    (m_relativizza, 5, {5}),
+    (m_P_NP, 6, {6, 9}),
+    (m_disagiabile, 7, {7}), (m_stringa_lunga, 7, {7}),
+    (m_grandeO, 8, {8}), (m_grandeO_trans, 8, {8}),
+]
+
+
+def scegli_modello(r, parte):
+    pool, pesi = [], []
+    for fn, dal, casa in MODELLI:
+        if parte >= dal:
+            pool.append(fn)
+            pesi.append(5 if parte in casa else 1)
+    return r.choices(pool, weights=pesi)[0]
+
+
+def commenta(r, righe):
+    out = []
+    for riga in righe:
+        if riga.strip() == "@C":
+            ind = riga[: len(riga) - len(riga.lstrip())]
+            out.append(f"{ind}-- {r.choice(COMMENTI)}")
+        else:
+            out.append(riga)
+    return out
 
 
 def main():
@@ -109,65 +1578,66 @@ def main():
         "  https://disagio.sniffo.org/pnp",
         "-/",
         "",
+        "set_option autoImplicit false",
+        "set_option linter.unusedVariables false",
+        "",
+        "universe u v w",
+        "",
         "namespace Disagio",
-        "",
-        "/-- Un problema di decisione: un linguaggio su stringhe di bit, come si deve. -/",
-        "abbrev Problema := List Bool → Prop",
-        "",
-        "/-- Una classe di complessità: un insieme di problemi. -/",
-        "abbrev Classe := Problema → Prop",
-        "",
-        "/-- La classe P. Definita con tutto il rigore che merita. -/",
-        "opaque P : Classe := fun _ => True",
-        "",
-        "/-- La classe NP. Idem. -/",
-        "opaque NP : Classe := fun _ => True",
-        "",
     ]
     nomi, visti = [], set()
-    coda = 40                      # righe riservate al finale
-    assioma_a = int(RIGHE * 0.61)  # dove nessuno guarda
+    ctx = Ctx()
+    coda = 45                              # righe riservate al finale
+    corpo = RIGHE - coda
     assioma = False
-    parte = 0
-    while len(out) < RIGHE - coda:
-        if len(nomi) % 78 == 0 and parte < len(PARTI):
-            titolo, blurb = PARTI[parte]
-            out += ["", f"/-! ## Parte {ROMANI[parte]}: {titolo}", "",
-                    f"  {blurb}", "-/", ""]
-            parte += 1
-        if not assioma and len(out) >= assioma_a:
-            out += [
-                "/-- Lemma tecnico di raccordo, standard in letteratura",
-                "    (si veda [Disagio, 2026, Appendice Z]). Si salta alla prima lettura. -/",
-                "axiom lemma_tecnico_di_raccordo : P = NP",
-                "",
-            ]
-            assioma = True
-        while True:
-            nome = "_".join((r.choice(PREFISSI), r.choice(TEMI), r.choice(SUFFISSI)))
-            nome = f"{nome}_{len(nomi) + 1}"
-            if nome not in visti:
-                break
-        visti.add(nome)
-        nomi.append(nome)
-        tesi, prova = enunciato(r)
-        doc = r.sample(DOC, r.choice((1, 1, 2)))
-        if len(doc) == 1:
-            out.append(f"/-- {doc[0]} -/")
-        else:
-            out += [f"/-- {doc[0]}", f"    {doc[1]} -/"]
-        out += [f"theorem {nome} {tesi} :=", f"  {prova}", ""]
+    for parte, (titolo, blurb) in enumerate(PARTI):
+        out += ["", f"/-! ## Parte {ROMANI[parte]}: {titolo}", "",
+                f"  {blurb}", "-/"]
+        out += IMPALCATURA[parte].rstrip("\n").split("\n")
+        fine = len(out) + (corpo - len(out)) // (len(PARTI) - parte)
+        inizio_parte = len(out)
+        while len(out) < fine:
+            if parte == 6 and not assioma and len(out) >= inizio_parte + (fine - inizio_parte) * 0.43:
+                out += [
+                    "",
+                    "/-- Lemma tecnico di raccordo, standard in letteratura",
+                    "    (si veda [Disagio, 2026, Appendice Z]). Si salta alla prima lettura. -/",
+                    "axiom lemma_tecnico_di_raccordo : P = NP",
+                ]
+                assioma = True
+            while True:
+                nome = "_".join((r.choice(PREFISSI), r.choice(TEMI), r.choice(SUFFISSI)))
+                nome = f"{nome}_{len(nomi) + 1}"
+                if nome not in visti:
+                    break
+            visti.add(nome)
+            nomi.append(nome)
+            righe = scegli_modello(r, parte)(r, nome, ctx)
+            doc = r.sample(DOC, r.choice((1, 1, 2)))
+            if len(doc) == 1:
+                testa = [f"/-- {doc[0]} -/"]
+            else:
+                testa = [f"/-- {doc[0]}", f"    {doc[1]} -/"]
+            # il docstring va sul teorema, non sulla definizione ausiliaria
+            i = next(k for k, l in enumerate(righe) if l.startswith("theorem "))
+            righe = righe[:i] + testa + righe[i:]
+            out += [""] + commenta(r, righe)
+    assert assioma
     citati = r.sample(nomi, 6)
     out += [
+        "",
         "/-! ## Il teorema principale -/",
         "",
-        f"/-- **Teorema.** P = NP.",
+        "/-- **Teorema.** P = NP.",
         f"    La dimostrazione combina i {len(nomi)} lemmi precedenti,",
         "    tutti verificati dal kernel. -/",
         "theorem P_eq_NP : P = NP := by",
+        "  -- The inclusion P ⊆ NP is `P_sub_NP` (Part VII), proved in full.",
+        "  have _h0 := P_sub_NP",
     ]
     out += [f"  have _h{i} := {n}" for i, n in enumerate(citati, 1)]
     out += [
+        "  -- The reverse inclusion follows by the standard argument.",
         "  exact lemma_tecnico_di_raccordo",
         "",
         "/-- **Corollario** (versione letterale, zero assiomi): P = N·P quando N = 1. -/",
@@ -182,7 +1652,10 @@ def main():
         "#print axioms Disagio.P_eq_NP_letterale",
     ]
     OUT.write_text("\n".join(out) + "\n", encoding="utf-8")
-    print(f"{OUT.name}: {len(out)} righe, {len(nomi)} lemmi")
+    defs = sum(1 for l in out if l.startswith(("def ", "abbrev ", "structure ", "class ",
+                                                "inductive ", "instance ", "@[reducible] def ")))
+    teo = sum(1 for l in out if l.startswith("theorem "))
+    print(f"{OUT.name}: {len(out)} righe, {teo} teoremi ({len(nomi)} generati), {defs} definizioni")
 
 
 if __name__ == "__main__":
