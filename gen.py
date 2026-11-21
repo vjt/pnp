@@ -173,7 +173,7 @@ def main():
         "/-- **Corollario** (versione letterale, zero assiomi): P = N·P quando N = 1. -/",
         "theorem P_eq_NP_letterale (P N : Nat) (h : N = 1) : P = N * P := by",
         "  subst h",
-        "  simp",
+        "  exact (Nat.one_mul P).symm",
         "",
         "end Disagio",
         "",
