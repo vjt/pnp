@@ -1,4 +1,4 @@
-name: verifica
+name: build
 on: [push, pull_request]
 jobs:
   kernel:
@@ -6,14 +6,15 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      # La libreria PNP: la radice, che importa e basta, e i moduli di PNP/
-      # (globs = "PNP.*" in lakefile.toml, anche quelli che nessuno importa).
+      # The PNP library: the root, which only imports, and the modules of PNP/
+      # (globs = "PNP.*" in lakefile.toml, including those nobody imports).
       - uses: leanprover/lean-action@v1
         with:
           build-args: "PNP"
-      # La risposta alla domanda frequente, ripetuta in fondo al log. Le stesse
-      # righe sono anche controllate da #guard_msgs: se cambiano, la build è già rossa.
-      - name: assiomi
+      # The logical footprint of the main statements, repeated at the end of the
+      # log. The same lines are pinned by #guard_msgs in PNP/Main.lean: if they
+      # change, the build above is already red.
+      - name: axioms
         run: |
           export PATH="$HOME/.elan/bin:$PATH"
-          lake build PNP.Conclusione 2>&1 | grep "axioms"
+          lake build PNP.Main 2>&1 | grep "axioms"
