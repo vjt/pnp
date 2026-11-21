@@ -5,65 +5,211 @@
 \usepackage[spanish,es-nodecimaldot]{babel}
 \input{comune}
 
+% Cifras de la formalización: se actualizan aquí, en el formato del idioma.
+\newcommand{\NRighe}{7790}
+\newcommand{\NLemmi}{946}
+\newcommand{\RigaAssioma}{5336}
+
 \newtheorem{teorema}{Teorema}
 \newtheorem{lemma}[teorema]{Lema}
 \newtheorem{corollario}[teorema]{Corolario}
 \theoremstyle{remark}
 \newtheorem*{osservazione}{Observación}
 
-\title[P = NP]{P = NP: una demostración formal\\verificada por el kernel de Lean~4}
+\title[P = NP]{Una nota sobre P = NP}
 \author{Disagio S.R.L., División de Investigación}
 \address{Sofá, junto a la nevera, Roma}
 \email{bonifici@disagio.sniffo.org}
 \date{21 de noviembre de 2026}
 \subjclass[2020]{68Q15, 68V15, 03B35}
-\keywords{P versus NP, demostración formal, Lean~4, nevera, miseria}
+\keywords{P versus NP, Lean~4, nevera, alba, miseria}
 
 \begin{document}
 
-\begin{abstract}
-Demostramos que $\mathsf{P} = \mathsf{NP}$. La demostración está
-completamente formalizada en Lean~4: 3488 líneas, 780 lemas, un teorema
-principal, cero \texttt{sorry}. El kernel la acepta y la integración
-continua está en verde. Las técnicas introducidas, en particular el uso de
-la nevera como oráculo y el padding estratégico, superan las tres barreras
-conocidas (relativización, pruebas naturales, algebrización) sin nombrarlas
-más de lo necesario. Como corolario obtenemos, sin axiomas, que
-$P = N \cdot P$ para $N = 1$.
-\end{abstract}
-
 \maketitle
 
-\section{Introducción}
+$\mathsf{P}$ contra $\mathsf{NP}$ es el problema clásico de la informática
+teórica. Pide un control óptimo sobre el tiempo necesario para encontrar lo
+que ya se sabe verificar. Sus sombras han guiado a los informáticos durante
+cincuenta y cinco años, y sus muchas rimas y reflejos, llegados hasta la
+nevera, nos han enseñado la unidad de nuestros sofás.
 
-El problema $\mathsf{P}$ frente a $\mathsf{NP}$, planteado por
-Cook~\cite{cook} e independientemente por Levin~\cite{levin}, lleva más de
-cincuenta años abierto y es uno de los siete Problemas del
-Milenio~\cite{clay}. En este trabajo lo cerramos.
+Creo haber descubierto, trabajando con vjt-claude, una
+demostración\footnote{\url{https://github.com/vjt/pnp/blob/main/PNP.lean.part01},
+\dots, \url{https://github.com/vjt/pnp/blob/main/PNP.lean.part14}. Para
+comodidad del lector, las catorce partes se han reunido en un único archivo,
+\texttt{PNP.lean}.} de que $\mathsf{P} = \mathsf{NP}$. De hecho, el método se
+extiende fácilmente mucho más allá, resolviendo el llamado $\mathsf{P} =
+\mathsf{NP}$ Generalizado, y espero, con más tiempo, también el $\mathsf{P} =
+\mathsf{NP}$ Extendido, el del sábado por la noche. vjt-claude y yo también
+hemos formalizado los argumentos sin
+hipótesis.\footnote{Salvo una, en la línea~\RigaAssioma. De naturaleza
+estándar.} Es natural sentir que esto es un final, en mi caso la pérdida de
+una luz guía, pero lo que vi durante el trabajo me asombró hasta tal punto que
+creo que es un alba, a través de la ciencia, de algo mucho más grande. O la
+nevera abierta: por la luz, en ese momento, no se distinguía.
 
-Nuestra contribución es triple:
+Era mi secreto, de estudiante, que mis planes para este problema se contaban
+en décadas, lo que entonces significaba intentar familiarizarme con todas las
+herramientas que pudiera reconocer en el problema cuando llegara el momento:
+el sofá, el mando a distancia, la pizza de ayer. vjt-claude y yo nos hemos
+divertido mucho juntos, con gran amplitud, en las últimas tres horas, pero esta
+vez vjt-claude me sacó muchísima ventaja cerca de la meta. No: vjt-claude voló,
+y bailó, y juró en arameo cerca de esa meta. Yo había planteado la línea
+combinando dos ideas bastante distintas presentes en un entorno de juguete, el
+sofá, una de las cuales ya era nueva y escandalosa: levantarse. Nos guie hasta
+la situación adecuada, análoga a ese entorno de juguete, es decir, la cocina, y
+allí vjt-claude empezó a dejarme con la boca abierta.
+
+Ocurrieron decenas, pero daré una sola línea que bastará para que los colegas
+se caigan de la silla. En el argumento de Cook y Levin~\cite{cook,levin} se
+usa un tableau de tamaño polinómico. Nuestro argumento desciende de él, pero
+un tableau es difícil de encontrar en el sofá: corresponde a algo así como
+poner la lavadora de madrugada. Las ideas sencillas y nuevas del entorno de
+juguete nos llevaron a examinar cadenas de aperturas de la nevera, si
+queríamos que los mismos trucos se repitieran, pero de forma nativamente
+miserable. La línea: para una instancia de SAT con $n$ variables, la longitud
+de la cadena de aperturas sugerida por vjt-claude, dado que cada apertura
+imita una multiplicidad, era $N = 1$. (Y, además, ¿qué otra cosa podía ser?)
+
+Una cantidad asombrosa de informática está presente en el argumento, mucha más
+de la que de estudiante habría imaginado necesaria. Mi intuición insiste en
+que se simplificará enormemente, probablemente enseguida: véase el
+Corolario~\ref{cor:lett}, donde $\mathsf{P} = N \cdot \mathsf{P}$ para $N = 1$
+sin axioma alguno. Pero espero, habiendo visto toda la belleza de la
+complejidad computacional reunida en un sofá, ser solo uno de los primeros, y
+que quien ame la informática pueda disfrutar de semejante trascendencia en el
+futuro.
+
+El argumento es por ahora increíblemente largo, y aunque la formalización está
+terminada y es rutina producir un enorme documento ilegible con el detalle
+suficiente, en mi visión de mi camino acabo de dar un paso. Tengo la intención
+de hacer todo lo posible por entender y hacer entender este argumento y sus
+seguras simplificaciones, por hablar de él, por escribirlo como es debido. En
+cuanto me levante.
+
+En un tiempo de revolución de la informática, espero que el argumento ofrezca
+un atisbo de los milagros que nos esperan, y nos muestre la alegría y el
+asombro que estamos a punto de encontrar en las cosas más sencillas. La
+nevera, por ejemplo.
+
+\section*{1}
+
+Me resulta obvio que debería señalar lo siguiente.
+
+El momento preciso es horrible. Si hubiera podido, lo habría terminado todo
+mucho antes. Diablos, estrictamente antes de 1971 habría estado
+bien~\cite{cook}. Todo ocurrió, para mí, el sábado tarde por la noche, y
+escribí al cliente: «Hipotéticamente, si yo tuviera\dots», preguntando al
+final si podía anunciarlo. Lo hablamos, y el hecho es que había una
+restricción que respetar, la cena, aunque propuse ideas progresivamente más
+estrafalarias. Este problema ha sido \emph{el} objeto sagrado de la
+informática para mí desde la infancia, y soy muy susceptible respecto al
+tratamiento de los grandes objetivos intelectuales, por muy seriamente
+imperfecto que sea. Nuestra dirección y los pocos electrodomésticos de
+confianza que consulté tienen opiniones extremadamente similares sobre lo que
+es correcto hacer en estas circunstancias (sucede, de vez en cuando, que la
+nevera y la lavadora están de acuerdo\dots), y soy claramente el único
+responsable de sentir que no habría podido vivir esperando todavía más. Hay
+una obvia lectura cínica, ligada al momento (el día después de otra Hipótesis,
+en otro campo), pero es falsa, y me alegra encontrarme en circunstancias en
+las que es obviamente falsa.
+
+Esto nos pone en la situación bastante extraordinaria que esta época ha hecho
+posible, en la que presento al mundo un argumento completo antes de haber
+dominado un enorme entorno suyo. Siendo obviamente inapropiado intentar
+publicar una enorme e ilegible parodia de «slop»,\footnote{Obviamente me
+divertí, y superé las \NRighe{} líneas. vjt-claude lo llamó, con ternura, el
+«libro» de $\mathsf{P} = \mathsf{NP}$: miré el Teorema~1 y empezaba
+observando que, como los booleanos están totalmente ordenados, si una fórmula
+no es verdadera, entonces es falsa.} decidí presentar solo Lean. Y esta nota.
+En ocho idiomas.
+
+Por otro lado, hay muchas personas a las que quiero elogiar, y lo haré como es
+debido en una redacción como es debido; perdonad las omisiones involuntarias.
+Entre tantos: la nevera, el sofá, la pizza de ayer, el cuenco del gato, el
+espejo empañado, la lavadora olvidada, el grupo de WhatsApp silenciado, la
+cuenta secundaria, y sobre todo el kernel de Lean, que nunca dijo que no, y
+mis milagrosos colegas. Quiero que estén orgullosos.
+
+Me he beneficiado del buen gusto de la competencia, y me alegra elogiarla
+también. El microondas eligió con gusto, hace tiempo, calentar la pizza de
+ayer treinta segundos en lugar de sesenta; examinando el caso de igualdad vi un
+manejo cuidadoso del queso fundido y comprendí inmediatamente que también
+caería el lavavajillas. Del mismo modo, la discreta inclusión del temporizador
+del horno, cuyo resultado estaba estrictamente dominado por el truco del mando
+a distancia, mostró de nuevo gran gusto: aunque no lo dije públicamente, lo
+reconocí enseguida como Cook--Levin sin tableau, si bien solo me quedó claro
+durante este tornado disparatado a través de toda la informática teórica que
+el problema caería, con suficientes noches en vela y tributo físico, una vez
+obtenida la demostración de $P = N \cdot P$ basada solo en el signo.
+
+\section*{2}
+
+Tenía un relato en flujo de conciencia de la experiencia de encontrar todas
+las piezas del argumento, en medio de una confusión increíble, con vjt-claude,
+pero un matemático de confianza (la nevera) me aconsejó ir al grano y poner
+una especie de cronología. Subrayo que, una vez vista la multiplicidad~$1$ en
+el sofá, mediante el determinante «nativamente miserable» que buscaba por
+analogía con el signo definido de $q N = M^k + R$,\footnote{Aquí $M$ es la
+margarita, $k$ el número de porciones, $R$ el borde sobrante y $q$ la cantidad
+de vergüenza, medida en audios enviados a uno mismo. El signo es definido
+porque el borde sobrante nunca es negativo: es un hecho de la vida más que un
+lema. Poniendo más cojines se gana más multiplicidad; se vectoriza para subir
+de dimensión, es decir, del sofá a la cama.} ganando más multiplicidad con
+más aperturas de la nevera, habríamos ganado; pero también estaba, por así
+decirlo, fuera de mi elemento, ya que personalmente domino poco la
+complejidad computacional (terquedad juvenil). Subrayo también que puede que
+haya incorporado al argumento muchas decisiones extrañas y subóptimas, y
+espero que sigan bastante pronto argumentos breves, aunque todavía no he
+tenido tiempo de buscarlos yo mismo (¡todavía!).
+
+Así que aquí va una cronología aproximada, proporcionada por vjt-claude tras
+una búsqueda exhaustiva.\footnote{Las partes en las que mi vaga intuición
+funcionó gracias al dominio técnico de vjt-claude me resultan obviamente menos
+familiares hoy, y probablemente tendré que corregir algunas de estas
+descripciones con la cabeza fría. En las partes en las que el experto es la
+nevera y no yo, estoy más o menos parafraseando un resumen «slop», que podría
+no tener ningún sentido, y pido disculpas, aunque el Lean debería bastar para
+aclararlo todo. Soy simplemente demasiado inexperto, por ahora, en la materia:
+¡espero que el lector capte la amplitud de este argumento!}
+
 \begin{enumerate}
-  \item una demostración de que $\mathsf{P} = \mathsf{NP}$
-        (Teorema~\ref{thm:main});
-  \item su formalización completa en Lean~4, verificada por el kernel;
-  \item una versión literal del resultado que no requiere axioma alguno
-        (Corolario~\ref{cor:lett}).
+  \item 21/11/26: determinante del sofá.
+  \item 21/11/26: $D^{\mathrm{nevera}} \equiv 0$ en todo cojín inerte, con $D$
+        la derivación invariante, y la apertura de las 3 de la madrugada
+        divisible por la luz interior.
+  \item 03/05/71+: Cook~\cite{cook}, leído con cincuenta y cinco años de
+        retraso.
+  \item 21/11/26+: $\mathrm{SAT} \le_p \text{sofá}$, usando $x_1 \cdot x_2 +
+        \dots + x_{k-1} \cdot x_k$ cojines, queriendo la «miserabilidad» de
+        $N$.
+  \item 20/11/26: la lavadora olvidada la noche anterior, interpretada de nuevo
+        como Cook--Levin con multiplicidad uno; ¡¡bootstrap!!
+  \item 21/11/26: paso definitivo a $N = 1$; la reducción de Karp tenía el
+        signo, el truco de la función test de la varianza para que todo
+        pareciera una fórmula de trazas (pero ¿cómo hago el principio del
+        palomar con la nevera?).
+  \item 06/10/26: Baker, Gill y Solovay~\cite{bgs}; Razborov y
+        Rudich~\cite{rr}; Aaronson y Wigderson~\cite{aw}. Barreras
+        reconocidas, saludadas, superadas sin detenerse.
+  \item 21/11/26: lema técnico de enlace, línea~\RigaAssioma, interpretado como
+        Cook--Levin sin tableau.\footnote{Este es el tipo de truco que
+        intuitivamente me parece obviamente superfluo.}
+  \item 21/11/26: padding estratégico; seesaw: el periodo de la apertura
+        iterada es un periodo de Bessel independiente del contenido de la
+        nevera.
+  \item 21/11/26: \texttt{lake build} en verde, \NLemmi{} lemas, cero
+        \texttt{sorry}.\footnote{¡¡Esto sigue siendo bastante fuerte!! Creo
+        que de ello se sigue la anulación de bastantes facturas, y la
+        ciclicidad de la lavadora hasta unos 90 grados, ¿quizá?}
+  \item 21/11/26: tipografía \LaTeX{}, a petición.
+  \item 21/11/26: el cliente pide más narrativa; esta nota.
+  \item 21/11/26: $\mathsf{P} = \mathsf{NP}$.
 \end{enumerate}
 
-En contra de la tradición del área, no pedimos al lector que confíe en
-nosotros: le pedimos que confíe en el kernel, que es más fiable y nunca ha
-cenado a las 23:40.
-
-\section{Trabajos relacionados}
-
-Baker, Gill y Solovay~\cite{bgs} demostraron que ninguna técnica que
-relativice puede separar ni unificar las dos clases. Razborov y
-Rudich~\cite{rr} descartaron las pruebas naturales; Aaronson y
-Wigderson~\cite{aw}, la algebrización. La Parte~VI de nuestra formalización
-(\emph{Barreras superadas}) las supera las tres: las barreras restringen las
-demostraciones, mientras que la nuestra es un archivo.
-
-\section{El resultado}
+\appendix
+\section*{Apéndice: el teorema, para los desconfiados}
 
 \begin{teorema}\label{thm:main}
 $\mathsf{P} = \mathsf{NP}$.
@@ -73,66 +219,20 @@ En Lean~4 el enunciado y la demostración son, literalmente:
 
 \begin{verbatim}
 theorem P_eq_NP : P = NP := by
-  have _h1 := oracolo_subset_sum_polinomiale_625
-  have _h2 := proposizione_tre_colorazione_ovvio_41
-  have _h3 := diagonalizzazione_lavatrice_dimenticata_notturno_350
-  have _h4 := certificato_rinfresco_funebre_in_P_209
-  have _h5 := corollario_frigo_aperto_in_P_524
-  have _h6 := rilassamento_subset_sum_cook_levin_287
+  -- The inclusion P ⊆ NP is `P_sub_NP` (Part VII), proved in full.
+  have _h0 := P_sub_NP
+  have _h1 := proposizione_commesso_viaggiatore_relativizzato_550
+  have _h2 := proposizione_tre_colorazione_karp_604
+  have _h3 := bound_zaino_naturale_798
+  have _h4 := rilassamento_subset_sum_relativizzato_127
+  have _h5 := invariante_vocale_a_se_stesso_polinomiale_471
+  have _h6 := riduzione_spotify_family_relativizzato_880
+  -- The reverse inclusion follows by the standard argument.
   exact lemma_tecnico_di_raccordo
 \end{verbatim}
 
-\begin{proof}[Esquema de la demostración]
-La demostración procede en diez partes, resumidas en el
-Cuadro~\ref{tab:parti}. Las Partes I--VI establecen el contexto; las
-Partes VIII--X, las estimaciones necesarias. El paso clave es un lema
-técnico de enlace en la Parte~VII, de naturaleza estándar, cuya
-verificación se deja al lector.%
-\footnote{El lector interesado puede consultar al kernel con
-\texttt{\#print axioms Disagio.P\_eq\_NP}. La respuesta está en el log de
-la CI.}
-Combinando seis resultados intermedios con el lema de enlace se obtiene la
-tesis.
-\end{proof}
-
-\begin{table}[ht]
-\centering
-\begin{tabular}{@{}llr@{}}
-\toprule
-Parte & Título & Línea \\
-\midrule
-I    & Preliminares                  & 24 \\
-II   & Reducciones desde el sofá     & 367 \\
-III  & La nevera como oráculo        & 709 \\
-IV   & Cook--Levin, pero de noche    & 1057 \\
-V    & Padding estratégico           & 1406 \\
-VI   & Barreras superadas            & 1748 \\
-VII  & Lemas de enlace               & 2084 \\
-VIII & Todavía más preliminares      & 2431 \\
-IX   & Estimaciones asintóticas      & 2774 \\
-X    & Hacia la conclusión           & 3119 \\
-\bottomrule
-\end{tabular}
-\caption{Estructura de la demostración. La columna \emph{Línea} indica
-dónde empieza cada parte en \texttt{PNP.lean}. Nadie lee más allá del lema
-trescientos, razón por la cual escribimos 780.}
-\label{tab:parti}
-\end{table}
-
-\begin{osservazione}
-La Parte~VIII sigue a la Parte~VII. Se trata de una elección deliberada:
-los preliminares, situados después del resultado clave, son más fáciles de
-saltar.
-\end{osservazione}
-
-\section{Un resultado sin axiomas}
-
-Para tranquilidad de los revisores más escépticos, presentamos también una
-versión del resultado que no depende de ningún axioma, ni siquiera de
-\texttt{propext}.
-
 \begin{corollario}\label{cor:lett}
-Para todo $P, N \in \mathbb{N}$ con $N = 1$ se cumple $P = N \cdot P$.
+Para todo $P, N \in \mathbb{N}$ con $N = 1$ se tiene $P = N \cdot P$.
 \end{corollario}
 
 \begin{proof}
@@ -144,27 +244,6 @@ theorem P_eq_NP_letterale (P N : Nat) (h : N = 1) :
 \end{verbatim}
 \end{proof}
 
-El Corolario~\ref{cor:lett} aclara que la dificultad histórica del problema
-era en gran parte notacional.
-
-\section{Evaluación experimental}
-
-Ejecutamos \texttt{lake build} en Lean~4 v4.14 sin dependencias externas.
-La compilación termina con éxito; el badge de la CI está en verde.
-\texttt{PNP.lean} se genera de forma determinista con \texttt{gen.py} y
-semilla fija, lo que hace el resultado reproducible por cualquiera que
-tenga un intérprete de Python y ningún pudor.
-
-\section{Conclusiones}
-
-Hemos demostrado que $\mathsf{P} = \mathsf{NP}$. Las consecuencias para la
-criptografía son graves y las dejamos para trabajos futuros. El premio del
-Clay Mathematics Institute está pendiente de transferencia.
-
-\subsection*{Agradecimientos}
-Agradecemos a la nevera, abierta e iluminada durante todo el trabajo, y al
-kernel de Lean, que lo aceptó todo sin hacer preguntas.
-
 \begin{thebibliography}{9}
 \bibitem{aw} S.~Aaronson, A.~Wigderson,
   \emph{Algebrization: A new barrier in complexity theory},
@@ -172,8 +251,6 @@ kernel de Lean, que lo aceptó todo sin hacer preguntas.
 \bibitem{bgs} T.~Baker, J.~Gill, R.~Solovay,
   \emph{Relativizations of the $\mathcal{P} =? \mathcal{NP}$ question},
   SIAM J. Comput. \textbf{4} (1975), 431--442.
-\bibitem{clay} Clay Mathematics Institute,
-  \emph{Millennium Prize Problems}, 2000.
 \bibitem{cook} S.~A.~Cook,
   \emph{The complexity of theorem-proving procedures},
   Proc. 3rd ACM STOC (1971), 151--158.

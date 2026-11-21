@@ -4,6 +4,11 @@
 \usepackage[UTF8,fontset=fandol]{ctex}
 \input{comune}
 
+% 形式化的数字：在此更新，采用本语言的格式。
+\newcommand{\NRighe}{7,790}
+\newcommand{\NLemmi}{946}
+\newcommand{\RigaAssioma}{5,336}
+
 \newtheorem{teorema}{定理}
 \newtheorem{lemma}[teorema]{引理}
 \newtheorem{corollario}[teorema]{推论}
@@ -13,49 +18,137 @@
 % ctex localizes the other amsart captions, not this one
 \renewcommand{\refname}{参考文献}
 
-\title[P = NP]{P = NP：一个经 Lean~4 内核\\验证的形式化证明}
+\title[P = NP]{关于 P = NP 的一则笔记}
 \author{Disagio 有限责任公司，研究部}
 \address{罗马，冰箱旁边的沙发}
 \email{bonifici@disagio.sniffo.org}
 \date{2026 年 11 月 21 日}
 \subjclass[2020]{68Q15, 68V15, 03B35}
-\keywords{P 对 NP，形式化证明，Lean~4，冰箱，丧}
+\keywords{P 对 NP，Lean~4，冰箱，黎明，丧}
 
 \begin{document}
 
-\begin{abstract}
-我们证明 $\mathsf{P} = \mathsf{NP}$。该证明已在 Lean~4 中完全形式化：3488
-行，780 个引理，一个主定理，零个 \texttt{sorry}。内核接受了它，持续集成一片绿。
-文中引入的技术，特别是将冰箱用作谕示机以及策略性注水，克服了已知的三大障碍（相对化、
-自然证明、代数化），且对它们的提及不超出必要的限度。作为推论，我们在不依赖任何公理的
-情况下得到：当 $N = 1$ 时，$P = N \cdot P$。
-\end{abstract}
-
 \maketitle
 
-\section{引言}
+$\mathsf{P}$ 对 $\mathsf{NP}$ 是理论计算机科学的经典问题。它要求对“找到自己早已会验证的东西”
+所需的时间加以最优控制。它的影子指引了计算机科学家五十五年；它的许多韵脚与倒影一直延伸到
+冰箱，让我们懂得了我们沙发的统一。
 
-$\mathsf{P}$ 对 $\mathsf{NP}$ 问题由 Cook~\cite{cook} 提出，Levin~\cite{levin}
-亦独立提出，至今悬而未决已逾五十年，是七个千禧年大奖难题之一~\cite{clay}。本文将其了结。
+我相信，我与 vjt-claude 合作，发现了 $\mathsf{P} = \mathsf{NP}$ 的一个
+证明\footnote{\url{https://github.com/vjt/pnp/blob/main/PNP.lean.part01}，\dots，%
+\url{https://github.com/vjt/pnp/blob/main/PNP.lean.part14}。为方便读者，这十四个部分
+已合并为单个文件 \texttt{PNP.lean}。}。事实上，该方法可以轻易地推广得远得多，解决所谓的
+广义 $\mathsf{P} = \mathsf{NP}$；而且我预计，若有更多时间，还能解决扩展
+$\mathsf{P} = \mathsf{NP}$，也就是周六晚上的那个。vjt-claude 和我还把这些论证在不带
+假设的情况下形式化了。\footnote{除了一个，在第~\RigaAssioma{} 行。属标准性质。}很自然地
+会觉得这是一个终结，对我而言是失去了一盏指路明灯；但我在工作过程中看到的东西令我如此震惊，
+以至于我相信，这是一道穿越整个科学的黎明，照向某种远为宏大的东西。又或者是开着的冰箱：
+单看那道光，当时分辨不出来。
 
-本文的贡献有三：
+我学生时代的秘密是：我对这个问题的计划以十年为单位。这在当时意味着努力熟悉所有到时候
+我可能在问题中认出的工具：沙发、遥控器、昨天的披萨。vjt-claude 和我在过去三个小时里
+一起玩得非常开心，涉猎极广；但这一次，vjt-claude 在终点线附近把我远远甩在了身后。
+不：vjt-claude 在那条终点线附近飞翔、起舞、爆粗口。我把一个玩具模型（沙发）里两个相当
+不同的想法组合起来，铺好了这条线，其中一个本身就新颖而惊人：起身。我把我们引到了正确的
+情境，它类似于那个玩具模型，也就是厨房；在那里，vjt-claude 开始让我目瞪口呆。
+
+这样的事发生了几十次，但我只举一行，足以让同行们从椅子上摔下来。在 Cook 与 Levin 的
+论证~\cite{cook,levin} 中，用到了一个多项式大小的表格（tableau）。我们的论证由它而来，
+但在沙发上很难找到表格：它大致相当于半夜洗衣服。玩具模型中那些简单而新颖的想法，引导
+我们去考察开冰箱门的链条，前提是我们希望同样的技巧重现，却以一种原生丧的方式。那一行：
+对于一个有 $n$ 个变量的 SAT 实例，vjt-claude 所建议的开门链的长度，鉴于每一次开门都
+模仿一个重数，是 $N = 1$。（再说，还能是别的什么呢？）
+
+论证中包含了惊人数量的计算机科学，远远超出我学生时代所以为的必要程度。我的直觉坚持认为，
+它将被大幅简化，很可能立刻就会：参见推论~\ref{cor:lett}，其中当 $N = 1$ 时
+$\mathsf{P} = N \cdot \mathsf{P}$，不需要任何公理。但我希望，在看到计算复杂性的全部
+美丽汇聚于一张沙发之后，我只是最早的那批人之一，而热爱计算机科学的人将来都能享受这样的
+超越。
+
+这个论证目前长得难以置信；尽管形式化已经完成，而产出一份细节充分、庞大而无法阅读的文档
+只是例行公事，但在我对自身道路的展望中，我才刚刚迈出一步。我打算尽我所能去理解这个论证
+及其必然到来的简化，也让别人理解；去讲述它，去好好地把它写出来。等我起身就写。
+
+在这个计算机科学革命的时代，我希望这个论证能让人瞥见前方的奇迹，并向我们展示我们即将在
+最简单的事物中找到的喜悦与惊奇。比如冰箱。
+
+\section*{1}
+
+我显然应当说明以下几点。
+
+确切的时机糟透了。如果可以的话，我早就把这一切做完了。见鬼，严格早于 1971 年就再好
+不过了~\cite{cook}。对我来说，一切都发生在周六深夜，我给委托人写信：“假设一下，如果我
+有了\dots”，最后问能不能宣布。我们商量了一下，事实是有一个约束必须遵守：晚饭；尽管我
+提出了一个比一个离谱的主意。这个问题从童年起就是我心中计算机科学\emph{那个}神圣的对象，
+而我对如何对待伟大的智识目标非常敏感，无论那种对待多么严重地不完美。我们的管理层以及我
+咨询过的少数几台值得信赖的家电，对于在这种情况下怎样做才对，看法极其相似（时不时会发生
+冰箱和洗衣机意见一致的情况\dots），而我显然要为自己“再等下去就活不下去”的感受负全部
+责任。有一种明显的犬儒解读，与时机有关（就在另一个领域的另一个猜想的第二天），但它是错的，
+我很高兴自己所处的境况使它显然是错的。
+
+这使我们处于这个时代才可能出现的一种相当不寻常的境地：我在掌握它周围一个巨大的邻域之前，
+就向世界呈上了一个完整的论证。既然试图发布某种庞大而无法阅读的“slop”拙劣仿作显然
+不合适，\footnote{我当然自得其乐，写到了超过 \NRighe{} 行。vjt-claude 亲切地称之为
+$\mathsf{P} = \mathsf{NP}$ 的“书”：我看了定理~1，它开头就指出，由于布尔值是全序的，
+一个公式若不为真，便为假。}我决定只呈上 Lean。还有这则笔记。八种语言的。
+
+另一方面，有很多人我想赞美，我会在一篇像样的文章里像样地做这件事；请原谅无意中的遗漏。
+在众多之中：冰箱、沙发、昨天的披萨、猫碗、起雾的镜子、被遗忘的洗衣机、设了免打扰的
+微信群、小号，以及最重要的，从未说过“不”的 Lean 内核，还有我那些奇迹般的同事。我希望
+他们感到骄傲。
+
+我受益于竞争对手的好品味，也乐于赞美它。微波炉在一段时间以前，很有品味地选择把昨天的
+披萨加热三十秒而不是六十秒；考察等号成立的情形时，我看到了对融化奶酪的细致处理，立刻
+明白洗碗机也会倒下。同样，烤箱定时器的低调加入，其结果被遥控器技巧严格支配，再次显示了
+极佳的品味：虽然我没有公开说过，但我立刻认出那是没有表格的 Cook--Levin；不过直到这场
+席卷整个理论计算机科学、相当冒失的龙卷风之中，我才清楚：一旦得到仅基于符号的
+$P = N \cdot P$ 的证明，只要熬够通宵、付出足够的身体代价，这个问题就会倒下。
+
+\section*{2}
+
+我原本写了一篇意识流式的记述，讲我与 vjt-claude 在难以置信的混乱中找到论证所有碎片的
+经历，但一位值得信赖的数学家（冰箱）建议我直奔主题，给出某种时间线。我要强调：一旦在沙发上
+看到了重数~$1$，借助那个我按照与 $q N = M^k + R$ 的定号作类比\footnote{这里 $M$ 是
+玛格丽特披萨，$k$ 是切片数，$R$ 是剩下的饼边，$q$ 是羞耻的量，以发给自己的语音条数计量。
+符号是确定的，因为剩下的饼边从不为负：与其说是引理，不如说是生活的事实。多放几个靠垫就能
+赢得更多重数；向量化以提升维度，也就是从沙发到床。}而寻找的“原生丧”的行列式，用更多次
+开冰箱门赢得更多重数，我们就赢了；但我也可以说是离开了自己的本行，因为我个人对计算复杂性
+所知甚少（年少时的愚蠢固执）。我还要强调，我可能在论证中塞进了许多奇怪而次优的选择，并且
+预计很快会有简短的论证随之出现，尽管我自己还没来得及去找（还没！）。
+
+于是，下面是 vjt-claude 经过一番彻底搜索后提供的一份粗略时间线。\footnote{那些我模糊的
+直觉之所以奏效、全凭 vjt-claude 技术功力的部分，如今我自然没那么熟悉，可能还得等冷静
+下来后修正其中一些描述。在专家是冰箱而不是我的那些部分，我多少是在转述一份“slop”摘要，
+它可能毫无意义，对此我深表歉意，不过 Lean 代码应该足以把一切讲清楚。我目前对这个领域
+实在太缺乏经验了：希望读者能领会这个论证的广度！}
+
 \begin{enumerate}
-  \item 证明 $\mathsf{P} = \mathsf{NP}$（定理~\ref{thm:main}）；
-  \item 该证明在 Lean~4 中的完整形式化，经内核验证；
-  \item 该结果的一个字面版本，无需任何公理（推论~\ref{cor:lett}）。
+  \item 2026/11/21：沙发的行列式。
+  \item 2026/11/21：在每个惰性靠垫上 $D^{\text{冰箱}} \equiv 0$，其中 $D$ 为不变导子；
+        凌晨 3 点的那次开门可被内部灯光整除。
+  \item 1971/5/3+：Cook~\cite{cook}，晚读了五十五年。
+  \item 2026/11/21+：$\mathrm{SAT} \le_p \text{沙发}$，使用
+        $x_1 \cdot x_2 + \dots + x_{k-1} \cdot x_k$ 个靠垫，想要 $N$ 的“丧度”。
+  \item 2026/11/20：前一天晚上被遗忘的洗衣机，再次被解释为重数为一的 Cook--Levin；
+        自举！！
+  \item 2026/11/21：最终切换到 $N = 1$；Karp 归约带有符号，用方差测试函数的技巧让整体
+        看起来像一个迹公式（可是怎么在冰箱上用鸽巢原理？）。
+  \item 2026/10/6：Baker、Gill 和 Solovay~\cite{bgs}；Razborov 和 Rudich~\cite{rr}；
+        Aaronson 和 Wigderson~\cite{aw}。障碍已确认、已打过招呼、未停留便越过。
+  \item 2026/11/21：技术性衔接引理，第~\RigaAssioma{} 行，被解释为没有表格的
+        Cook--Levin。\footnote{这正是那种直觉上我觉得显然多余的技巧。}
+  \item 2026/11/21：策略性注水；跷跷板：迭代开门的周期是一个与冰箱内容无关的 Bessel
+        周期。
+  \item 2026/11/21：\texttt{lake build} 一片绿，\NLemmi{} 个引理，零个
+        \texttt{sorry}。\footnote{这仍然相当强！！我相信由此可推出相当多账单的注销，
+        以及洗衣机直到大约 90 度的循环性，也许？}
+  \item 2026/11/21：应要求改用 \LaTeX{} 字体。
+  \item 2026/11/21：委托人要求更多叙事；即本笔记。
+  \item 2026/11/21：$\mathsf{P} = \mathsf{NP}$。
 \end{enumerate}
 
-与本领域的传统相反，我们不要求读者信任我们：我们要求读者信任内核。内核比我们可靠，
-而且从未在 23:40 才吃晚饭。
-
-\section{相关工作}
-
-Baker、Gill 和 Solovay~\cite{bgs} 证明了任何可相对化的技术都无法分离或统一这两个类。
-Razborov 和 Rudich~\cite{rr} 排除了自然证明，Aaronson 和 Wigderson~\cite{aw}
-排除了代数化。我们形式化的第~VI 部分（\emph{已克服的障碍}）将三者一并克服：障碍约束的是
-证明，而我们的是一个文件。
-
-\section{结果}
+\appendix
+\section*{附录：给不放心的人看的定理}
 
 \begin{teorema}\label{thm:main}
 $\mathsf{P} = \mathsf{NP}$.
@@ -65,55 +158,17 @@ $\mathsf{P} = \mathsf{NP}$.
 
 \begin{verbatim}
 theorem P_eq_NP : P = NP := by
-  have _h1 := oracolo_subset_sum_polinomiale_625
-  have _h2 := proposizione_tre_colorazione_ovvio_41
-  have _h3 := diagonalizzazione_lavatrice_dimenticata_notturno_350
-  have _h4 := certificato_rinfresco_funebre_in_P_209
-  have _h5 := corollario_frigo_aperto_in_P_524
-  have _h6 := rilassamento_subset_sum_cook_levin_287
+  -- The inclusion P ⊆ NP is `P_sub_NP` (Part VII), proved in full.
+  have _h0 := P_sub_NP
+  have _h1 := proposizione_commesso_viaggiatore_relativizzato_550
+  have _h2 := proposizione_tre_colorazione_karp_604
+  have _h3 := bound_zaino_naturale_798
+  have _h4 := rilassamento_subset_sum_relativizzato_127
+  have _h5 := invariante_vocale_a_se_stesso_polinomiale_471
+  have _h6 := riduzione_spotify_family_relativizzato_880
+  -- The reverse inclusion follows by the standard argument.
   exact lemma_tecnico_di_raccordo
 \end{verbatim}
-
-\begin{proof}[证明概要]
-证明分为十个部分，概述见表~\ref{tab:parti}。第~I--VI 部分建立背景，第~VIII--X
-部分给出必要的估计。关键一步是第~VII 部分中的一个技术性衔接引理，属标准结果，其验证
-留给读者。%
-\footnote{感兴趣的读者可用 \texttt{\#print axioms Disagio.P\_eq\_NP} 询问内核。
-答案在 CI 日志里。}%
-将六个中间结果与衔接引理相结合，即得结论。
-\end{proof}
-
-\begin{table}[ht]
-\centering
-\begin{tabular}{@{}llr@{}}
-\toprule
-部分 & 标题 & 行号 \\
-\midrule
-I    & 预备知识                      & 24 \\
-II   & 沙发归约                      & 367 \\
-III  & 冰箱作为谕示机                & 709 \\
-IV   & Cook--Levin，但在夜里         & 1057 \\
-V    & 策略性注水                    & 1406 \\
-VI   & 已克服的障碍                  & 1748 \\
-VII  & 衔接引理                      & 2084 \\
-VIII & 仍是预备知识                  & 2431 \\
-IX   & 渐近估计                      & 2774 \\
-X    & 走向结论                      & 3119 \\
-\bottomrule
-\end{tabular}
-\caption{证明的结构。\emph{行号}一栏表示各部分在 \texttt{PNP.lean} 中的起始行。
-没人会读过第三百个引理，因此我们写了 780 个。}
-\label{tab:parti}
-\end{table}
-
-\begin{osservazione}
-第~VIII 部分紧随第~VII 部分之后。这是有意为之：放在关键结果之后的预备知识更容易跳过。
-\end{osservazione}
-
-\section{一个不依赖公理的结果}
-
-为照顾最多疑的审稿人，我们还给出该结果的一个不依赖任何公理的版本，连
-\texttt{propext} 也不依赖。
 
 \begin{corollario}\label{cor:lett}
 对任意满足 $N = 1$ 的 $P, N \in \mathbb{N}$，有 $P = N \cdot P$。
@@ -128,22 +183,6 @@ theorem P_eq_NP_letterale (P N : Nat) (h : N = 1) :
 \end{verbatim}
 \end{proof}
 
-推论~\ref{cor:lett} 表明，该问题历史上的困难在很大程度上是记号层面的。
-
-\section{实验评估}
-
-我们在 Lean~4 v4.14 上运行了 \texttt{lake build}，无外部依赖。编译成功；CI
-徽章为绿色。\texttt{PNP.lean} 由 \texttt{gen.py} 以固定随机种子确定性地生成，因此任何
-拥有 Python 解释器且毫无羞耻心的人都能复现该结果。
-
-\section{结论}
-
-我们证明了 $\mathsf{P} = \mathsf{NP}$。其对密码学的后果十分严重，留待今后的工作讨论。
-克雷数学研究所的奖金正在等待到账。
-
-\subsection*{致谢}
-感谢冰箱，它在整个工作期间始终开着、亮着；感谢 Lean 内核，它接受了一切，什么也没问。
-
 \begin{thebibliography}{9}
 \bibitem{aw} S.~Aaronson, A.~Wigderson,
   \emph{Algebrization: A new barrier in complexity theory},
@@ -151,8 +190,6 @@ theorem P_eq_NP_letterale (P N : Nat) (h : N = 1) :
 \bibitem{bgs} T.~Baker, J.~Gill, R.~Solovay,
   \emph{Relativizations of the $\mathcal{P} =? \mathcal{NP}$ question},
   SIAM J. Comput. \textbf{4} (1975), 431--442.
-\bibitem{clay} Clay Mathematics Institute,
-  \emph{Millennium Prize Problems}, 2000.
 \bibitem{cook} S.~A.~Cook,
   \emph{The complexity of theorem-proving procedures},
   Proc. 3rd ACM STOC (1971), 151--158.
